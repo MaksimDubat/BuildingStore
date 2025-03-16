@@ -25,7 +25,7 @@ namespace ProductService.WebAPI.Controllers
         [HttpGet("Products")]
         public async Task<ActionResult<IEnumerable<ProductDto>>> GetAllProducts(CancellationToken cancellation)
         {
-            var products = await _mediator.Send(new GetAllQuery(), cancellation); //нужны ли проверки?
+            var products = await _mediator.Send(new GetAllProductsQuery(), cancellation);
             return Ok(products);
         }
         /// <summary>
@@ -36,7 +36,7 @@ namespace ProductService.WebAPI.Controllers
         [HttpGet("product/{id}")]
         public async Task<ActionResult<ProductDto>> GetProductById(int id, CancellationToken cancellation)
         {
-            var product = await _mediator.Send(new GetByIdQuery(id), cancellation);
+            var product = await _mediator.Send(new GetProductByIdQuery(id), cancellation);
             return Ok(product);
         }
         /// <summary>
@@ -47,7 +47,7 @@ namespace ProductService.WebAPI.Controllers
         [HttpGet("product-name{name}")]
         public async Task<ActionResult<ProductDto>> GetProductByName(string name, CancellationToken cancellation)
         {
-            var product = await _mediator.Send(new GetByNameQuery(name), cancellation);
+            var product = await _mediator.Send(new GetProductByNameQuery(name), cancellation);
             return Ok(product);
         }
         /// <summary>

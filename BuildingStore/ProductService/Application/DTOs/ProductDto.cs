@@ -14,6 +14,10 @@
         /// </summary>
         public required string Description { get; set; }
         /// <summary>
+        /// Категория.
+        /// </summary>
+        public int CategoryId { get; set; }
+        /// <summary>
         /// Цена продукта.
         /// </summary>
         public decimal Price { get; set; }

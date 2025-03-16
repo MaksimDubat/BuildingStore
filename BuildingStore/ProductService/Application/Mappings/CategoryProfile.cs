@@ -13,19 +13,11 @@ namespace ProductService.Application.Mappings
         {
             CreateMap<Category, CategoryDto>()
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
-                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.CategoryName))
-                .ForMember(dest => dest.Products, opt => opt.MapFrom(src => src.Products));
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.CategoryName));
 
             CreateMap<CategoryDto, Category>()
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
-                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.CategoryName))
-                .ForMember(dest => dest.Products, opt => opt.MapFrom(src =>
-                    src.Products.Select(productDto => new Product
-                    {
-                        Name = productDto.Name,
-                        Price = productDto.Price,
-                        Description = productDto.Description
-                    }).ToList()));
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.CategoryName));
         }
     }
 }

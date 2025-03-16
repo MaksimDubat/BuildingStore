@@ -10,10 +10,13 @@
         /// </summary>
         IProductRepository Products { get; }
         /// <summary>
+        /// Репозиторий по работе с категориями.
+        /// </summary>
+        ICategoryRepository Categories { get; }
+        /// <summary>
         /// Завершение операции.
         /// </summary>
         /// <param name="cancellation"></param>
-        /// <returns></returns>
         Task<int> CompleteAsync(CancellationToken cancellation);
     }
 }

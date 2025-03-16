@@ -14,6 +14,7 @@ namespace ProductService.Application.Mappings
             CreateMap<Product, ProductDto>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
                 .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => src.ImageURL))
                 .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount));
@@ -21,6 +22,7 @@ namespace ProductService.Application.Mappings
             CreateMap<ProductDto, Product>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
                 .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => src.ImageURL))
                 .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount));

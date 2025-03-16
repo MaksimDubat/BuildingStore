@@ -20,6 +20,7 @@ namespace ProductService.WebAPI.Registrations
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

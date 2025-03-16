@@ -11,11 +11,14 @@ namespace ProductService.Infrastructure.UnitOfWork
         private readonly MutableDbContext _context;
         private readonly IServiceProvider _serviceProvider;
         public IProductRepository Products { get; }
-        public UnitOfWork(MutableDbContext context, IServiceProvider serviceProvider, IProductRepository products)
+        public ICategoryRepository Categories {  get; }
+
+        public UnitOfWork(MutableDbContext context, IServiceProvider serviceProvider, IProductRepository products, ICategoryRepository categories)
         {
             _context = context;
             _serviceProvider = serviceProvider;
             Products = products;
+            Categories = categories;
         }
         /// <inheritdoc/>
         public async Task<int> CompleteAsync(CancellationToken cancellation)
