@@ -15,10 +15,12 @@ namespace ProductService.WebAPI.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly IMediator _mediator;
+
         public CategoryController(IMediator mediator)
         {
             _mediator = mediator;
         }
+
         /// <summary>
         /// Получение всех категорий.
         /// </summary>
@@ -29,6 +31,7 @@ namespace ProductService.WebAPI.Controllers
             var categories = await _mediator.Send(new GetAllCategoriesQuery(), cancellation);
             return Ok(categories);
         }
+
         /// <summary>
         /// Получение категории по идентификатору.
         /// </summary>
@@ -40,6 +43,7 @@ namespace ProductService.WebAPI.Controllers
             var category = await _mediator.Send(new GetCategoryByIdQuery(id), cancellation);
             return Ok(category);
         }
+
         /// <summary>
         /// Добавление категории.
         /// </summary>
@@ -51,6 +55,7 @@ namespace ProductService.WebAPI.Controllers
             var result = await _mediator.Send(command, cancellation);
             return Ok(result);
         }
+
         /// <summary>
         /// Обновление категории.
         /// </summary>
@@ -63,6 +68,7 @@ namespace ProductService.WebAPI.Controllers
             var category = await _mediator.Send(command, cancellation);
             return Ok(category);
         }
+
         /// <summary>
         /// Удаление категории.
         /// </summary>

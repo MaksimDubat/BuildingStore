@@ -13,6 +13,7 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+
         public AddCategoryCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
@@ -21,18 +22,23 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
 
         public async Task<string> Handle(AddCategoryCommand request, CancellationToken cancellationToken)
         {
-            var exist = await _unitOfWork.Categories.AnyAsync(x => x.CategoryName == request.Category.CategoryName, cancellationToken);
+            var category = _mapper.Map<Category>(request.Category);
+
+            if(category == null)
+            {
+                throw new ArgumentNullException("object is empty");
+            }
+
+            var exist = await _unitOfWork.Categories.IsCategoryExistOrDuplicateAsync(category, cancellationToken);
+
             if (exist)
             {
                 return "already exist";
             }
-            var category = _mapper.Map<Category>(request.Category);
-            if(category == null)
-            {
-                throw new InvalidOperationException("Object is empty");
-            }
+
             await _unitOfWork.Categories.AddAsync(category, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
+
             return "Category was added";
         }
     }

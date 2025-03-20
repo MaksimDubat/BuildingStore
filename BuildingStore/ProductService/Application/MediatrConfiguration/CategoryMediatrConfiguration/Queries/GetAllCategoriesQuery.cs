@@ -6,7 +6,5 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
     /// <summary>
     /// Модель запроса на получение всех категорий.
     /// </summary>
-    public class GetAllCategoriesQuery : IRequest<IEnumerable<CategoryDto>>
-    {
-    }
+    public record GetAllCategoriesQuery : IRequest<IEnumerable<CategoryDto>>;
 }

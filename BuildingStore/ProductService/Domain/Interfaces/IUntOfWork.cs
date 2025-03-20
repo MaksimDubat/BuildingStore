@@ -9,10 +9,12 @@
         /// Репозиторий по работе с продуктом.
         /// </summary>
         IProductRepository Products { get; }
+
         /// <summary>
         /// Репозиторий по работе с категориями.
         /// </summary>
         ICategoryRepository Categories { get; }
+
         /// <summary>
         /// Завершение операции.
         /// </summary>

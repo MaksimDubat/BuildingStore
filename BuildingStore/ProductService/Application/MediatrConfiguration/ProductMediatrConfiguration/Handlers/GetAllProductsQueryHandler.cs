@@ -13,6 +13,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+
         public GetAllProductsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
@@ -22,10 +23,12 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
         public async Task<IEnumerable<ProductDto>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
         {
             var result = await _unitOfWork.Products.GetAllAsync(cancellationToken);
+
             if(result == null)
             {
                 throw new KeyNotFoundException("Not found");
             }
+
             return _mapper.Map<IEnumerable<ProductDto>>(result);
         }
     }

@@ -13,30 +13,35 @@ namespace ProductService.Domain.Interfaces
         /// </summary>
         /// <param name="cancellation"></param>
         Task<List<T>> GetAllAsync(CancellationToken cancellation);
+
         /// <summary>
         /// Получение сущности по идентификатору.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="cancellation"></param>
         Task<T> GetAsync(int id, CancellationToken cancellation);
+
         /// <summary>
         /// Добавление сущности.
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="cancellation"></param>
         Task AddAsync(T entity, CancellationToken cancellation);
+
         /// <summary>
         /// Обновление сущности.
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="cancellation"></param>
         Task UpdateAsync(T entity, CancellationToken cancellation);
+
         /// <summary>
         /// Удаление сущности.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="cancellation"></param>
         Task<T> DeleteAsync(int id, CancellationToken cancellation);
+
         /// <summary>
         /// Проверка наличия уже существующих записей.
         /// </summary>

@@ -6,7 +6,5 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Модель запроса на получение всех продуктов.
     /// </summary>
-    public class GetAllProductsQuery : IRequest<IEnumerable<ProductDto>>
-    {
-    }
+    public record GetAllProductsQuery : IRequest<IEnumerable<ProductDto>>;
 }

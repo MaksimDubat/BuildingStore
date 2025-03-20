@@ -10,19 +10,24 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
     public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand, string>
     {
         private readonly IUnitOfWork _unitOfWork;
+
         public DeleteCategoryCommandHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
+
         public async Task<string> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
         {
-            var exist = await _unitOfWork.Categories.AnyAsync(x => x.CategoryId == request.Id, cancellationToken);
-            if (!exist)
+            var category = await _unitOfWork.Categories.GetAsync(request.Id, cancellationToken);
+
+            if (category == null)
             {
-                return "Not found";
+                throw new KeyNotFoundException("Not found");
             }
-            await _unitOfWork.Categories.DeleteAsync(request.Id, cancellationToken);
+
+            await _unitOfWork.Categories.DeleteAsync(category.CategoryId, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
+
             return $"Category {request.Id} was deleted";
         }
     }

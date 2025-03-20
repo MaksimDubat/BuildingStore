@@ -6,15 +6,6 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
     /// <summary>
     /// Модель запроса на получение категории по идентификатору.
     /// </summary>
-    public class GetCategoryByIdQuery : IRequest<CategoryDto>
-    {
-        /// <summary>
-        /// Идентификатор категории.
-        /// </summary>
-        public int Id { get; set; }
-        public GetCategoryByIdQuery(int id)
-        {
-            Id = id;
-        }
-    }
+    public record GetCategoryByIdQuery(int Id) : IRequest<CategoryDto>;
+
 }

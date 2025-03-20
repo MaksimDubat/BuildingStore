@@ -13,5 +13,13 @@ namespace ProductService.Domain.Interfaces
         /// <param name="name"></param>
         /// <param name="cancellation"></param>
         Task<Product> GetByNameAsync(string name, CancellationToken cancellation);
+
+        /// <summary>
+        /// Проверка входящих данных продукта на наличие уже существующего.
+        /// </summary>
+        /// <param name="product"></param>
+        /// <param name="cancellation"></param>
+        Task<bool> IsProductExistOrDuplicateAsync(Product product, CancellationToken cancellation);
+
     }
 }

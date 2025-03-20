@@ -11,6 +11,7 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
     public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand, string>
     {
         private readonly IUnitOfWork _unitOfWork;
+
         public UpdateCategoryCommandHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -19,20 +20,24 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
         public async Task<string> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
             var category = await _unitOfWork.Categories.GetAsync(request.Id, cancellationToken);
+
             if (category == null)
             {
                 return "Category not found";
             }
-            var isDuplicate = await _unitOfWork.Categories.AnyAsync(x => x.CategoryId != request.Id &&
-            x.CategoryName == request.Category.CategoryName, cancellationToken);
+
+            var isDuplicate = await _unitOfWork.Categories.IsCategoryExistOrDuplicateAsync(category, cancellationToken);
+
             if (isDuplicate)
             {
                 return "Duplicate";
             }
+
             category.CategoryName = request.Category.CategoryName;
             
             await _unitOfWork.Categories.UpdateAsync(category, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
+
             return "Category was updated";
         }
     }

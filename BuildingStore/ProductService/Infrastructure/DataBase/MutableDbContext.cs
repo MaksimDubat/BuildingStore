@@ -16,11 +16,13 @@ namespace ProductService.Infrastructure.DataBase
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<Product> Products { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(MutableDbContext).Assembly);
             base.OnModelCreating(modelBuilder);
         }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);

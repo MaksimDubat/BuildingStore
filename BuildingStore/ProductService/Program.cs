@@ -30,7 +30,6 @@ namespace ProductService
 
             app.UseAuthorization();
 
-
             app.MapControllers();
 
             app.Run();

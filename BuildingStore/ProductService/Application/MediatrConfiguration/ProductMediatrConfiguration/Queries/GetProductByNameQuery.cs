@@ -6,15 +6,5 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Модель запроса на получение товара по наименованию.
     /// </summary>
-    public class GetProductByNameQuery : IRequest<ProductDto>
-    {
-        /// <summary>
-        /// Наименование продукта.
-        /// </summary>
-        public string Name { get; set; }
-        public GetProductByNameQuery(string name)
-        {
-            Name = name;
-        }
-    }
+    public record GetProductByNameQuery(string Name) : IRequest<ProductDto>;
 }

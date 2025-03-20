@@ -14,10 +14,12 @@ namespace ProductService.WebAPI.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IMediator _mediator;
+
         public ProductController(IMediator mediator)
         {
             _mediator = mediator;
         }
+
         /// <summary>
         /// Получение всех продуктов.
         /// </summary>
@@ -28,6 +30,7 @@ namespace ProductService.WebAPI.Controllers
             var products = await _mediator.Send(new GetAllProductsQuery(), cancellation);
             return Ok(products);
         }
+
         /// <summary>
         /// Получение товара по идентификатору.
         /// </summary>
@@ -39,6 +42,7 @@ namespace ProductService.WebAPI.Controllers
             var product = await _mediator.Send(new GetProductByIdQuery(id), cancellation);
             return Ok(product);
         }
+
         /// <summary>
         /// Получение продукта по наименованию.
         /// </summary>
@@ -50,6 +54,7 @@ namespace ProductService.WebAPI.Controllers
             var product = await _mediator.Send(new GetProductByNameQuery(name), cancellation);
             return Ok(product);
         }
+
         /// <summary>
         /// Добавление продукта.
         /// </summary>
@@ -61,6 +66,7 @@ namespace ProductService.WebAPI.Controllers
             var result = await _mediator.Send(command, cancellation);
             return Ok(result);
         }
+
         /// <summary>
         /// Обновление продукта.
         /// </summary>
@@ -73,6 +79,7 @@ namespace ProductService.WebAPI.Controllers
             var product = await _mediator.Send(command, cancellation);
             return Ok(product);
         }
+
         /// <summary>
         /// Удаление продукта.
         /// </summary>

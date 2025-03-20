@@ -14,6 +14,7 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+
         public GetCategoryByIdQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
@@ -23,10 +24,12 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
         public async Task<CategoryDto> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
         {
             var category = await _unitOfWork.Categories.GetAsync(request.Id, cancellationToken);
+
             if (category == null)
             {
                 throw new KeyNotFoundException("Not found");
             }
+
             return _mapper.Map<CategoryDto>(category);
         }
     }

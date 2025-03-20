@@ -7,5 +7,11 @@ namespace ProductService.Domain.Interfaces
     /// </summary>
     public interface ICategoryRepository : IBaseRepository<Category>
     {
+        /// <summary>
+        /// Проверка входящих данных категории на наличие уже существующей.
+        /// </summary>
+        /// <param name="category"></param>
+        /// <param name="cancellation"></param>
+        Task<bool> IsCategoryExistOrDuplicateAsync(Category category, CancellationToken cancellation);
     }
 }
