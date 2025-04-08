@@ -50,10 +50,10 @@ namespace ProductService.WebAPI.Controllers
         /// <param name="command"></param>
         /// <param name="cancellation"></param>
         [HttpPost]
-        public async Task<ActionResult<CategoryDto>> AddProduct([FromBody] AddCategoryCommand command, CancellationToken cancellation)
+        public async Task<ActionResult<CategoryDto>> AddCategory([FromBody] AddCategoryCommand command, CancellationToken cancellation)
         {
-            var result = await _mediator.Send(command, cancellation);
-            return Ok(result);
+            await _mediator.Send(command, cancellation);
+            return Ok("Category was added");
         }
 
         /// <summary>
@@ -65,8 +65,8 @@ namespace ProductService.WebAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<CategoryDto>> UpdateCategory(int id, [FromBody] UpdateCategoryCommand command, CancellationToken cancellation)
         {
-            var category = await _mediator.Send(command, cancellation);
-            return Ok(category);
+            await _mediator.Send(command, cancellation);
+            return Ok("Category was updated");
         }
 
         /// <summary>
@@ -77,8 +77,8 @@ namespace ProductService.WebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCategory(int id, CancellationToken cancellation)
         {
-            var result = await _mediator.Send(new DeleteCategoryCommand(id), cancellation);
-            return Ok("Deleted");
+            await _mediator.Send(new DeleteCategoryCommand(id), cancellation);
+            return Ok("Category was deleted");
         }
     }
 }

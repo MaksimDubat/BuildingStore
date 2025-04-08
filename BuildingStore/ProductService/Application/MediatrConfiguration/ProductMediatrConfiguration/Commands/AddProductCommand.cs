@@ -6,12 +6,13 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Модель команды для добавления продукта.
     /// </summary>
-    public class AddProductCommand : IRequest<string>
+    public class AddProductCommand : IRequest
     {
         /// <summary>
         /// Продукт.
         /// </summary>
         public ProductDto Product { get; set; }
+
         public AddProductCommand(ProductDto product)
         {
             Product = product;

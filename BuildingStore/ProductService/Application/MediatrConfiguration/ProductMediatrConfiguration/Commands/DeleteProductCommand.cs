@@ -5,12 +5,13 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Модель команды для удаления продукта.
     /// </summary>
-    public class DeleteProductCommand : IRequest<string>
+    public class DeleteProductCommand : IRequest
     {
         /// <summary>
         /// Идентификатор продукта.
         /// </summary>
         public int Id { get; set; } 
+
         public DeleteProductCommand(int id)
         {
             Id = id;

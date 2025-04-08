@@ -26,7 +26,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
 
             if (product == null)
             {
-                throw new KeyNotFoundException("Not Found"); // что лучше null or ex
+                throw new KeyNotFoundException("Not Found");
             }
 
             return _mapper.Map<ProductDto>(product);

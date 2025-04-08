@@ -6,16 +6,18 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Модель команды для обновления продукта.
     /// </summary>
-    public class UpdateProductCommand : IRequest<string>
+    public class UpdateProductCommand : IRequest
     {
         /// <summary>
         /// Идентификатор продукта.
         /// </summary>
         public int Id { get; set; }
+
         /// <summary>
         /// Продукт.
         /// </summary>
         public ProductDto Product { get; set; } 
+
         public UpdateProductCommand(int id, ProductDto product)
         {
             Id = id;

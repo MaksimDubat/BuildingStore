@@ -7,7 +7,7 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
     /// <summary>
     /// Обработчик команды для удаления категории.
     /// </summary>
-    public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand, string>
+    public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -16,7 +16,7 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<string> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
+        public async Task Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
         {
             var category = await _unitOfWork.Categories.GetAsync(request.Id, cancellationToken);
 
@@ -28,7 +28,6 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
             await _unitOfWork.Categories.DeleteAsync(category.CategoryId, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
 
-            return $"Category {request.Id} was deleted";
         }
     }
 }

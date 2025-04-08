@@ -6,15 +6,16 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
     /// <summary>
     /// Модель команды для добавления категории.
     /// </summary>
-    public class AddCategoryCommand : IRequest<string>
+    public class AddCategoryCommand : IRequest
     {
         /// <summary>
         /// Категория.
         /// </summary>
-        public CategoryDto Category { get; set; }
-        public AddCategoryCommand(CategoryDto category)
+        public string CategoryName { get; set; }
+
+        public AddCategoryCommand(string categoryName)
         {
-            Category = category;
+            CategoryName = categoryName;
         }
     }
 }

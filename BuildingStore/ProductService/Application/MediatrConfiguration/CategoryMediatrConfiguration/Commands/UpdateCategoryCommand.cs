@@ -6,20 +6,22 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
     /// <summary>
     /// Модель команды для обновления категории.
     /// </summary>
-    public class UpdateCategoryCommand : IRequest<string>
+    public class UpdateCategoryCommand : IRequest
     {
         /// <summary>
         /// Идентификатор продукта.
         /// </summary>
         public int Id { get; set; }
+
         /// <summary>
         /// Категория.
         /// </summary>
-        public CategoryDto Category { get; set; }
-        public UpdateCategoryCommand(int id, CategoryDto category)
+        public string CategoryName { get; set; }
+
+        public UpdateCategoryCommand(int id, string categoryName)
         {
             Id = id;
-            Category = category;
+            CategoryName = categoryName;
         }
     }
 }

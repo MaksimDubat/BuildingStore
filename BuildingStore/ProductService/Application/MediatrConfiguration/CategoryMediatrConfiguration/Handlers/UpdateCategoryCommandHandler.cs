@@ -8,7 +8,7 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
     /// <summary>
     /// Обработчик команды для обновления категории.
     /// </summary>
-    public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand, string>
+    public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -17,28 +17,27 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<string> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
+        public async Task Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
             var category = await _unitOfWork.Categories.GetAsync(request.Id, cancellationToken);
 
             if (category == null)
             {
-                return "Category not found";
+                throw new KeyNotFoundException("Not found");
             }
 
             var isDuplicate = await _unitOfWork.Categories.IsCategoryExistOrDuplicateAsync(category, cancellationToken);
 
             if (isDuplicate)
             {
-                return "Duplicate";
+                throw new ArgumentException("Already exist");
             }
 
-            category.CategoryName = request.Category.CategoryName;
+            category.CategoryName = request.CategoryName;
             
             await _unitOfWork.Categories.UpdateAsync(category, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
-
-            return "Category was updated";
+        
         }
     }
 }

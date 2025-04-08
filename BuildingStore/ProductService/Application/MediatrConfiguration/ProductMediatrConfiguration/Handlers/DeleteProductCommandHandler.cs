@@ -7,7 +7,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Обработчик команды для удаления продукта.
     /// </summary>
-    public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand, string>
+    public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -16,7 +16,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<string> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
+        public async Task Handle(DeleteProductCommand request, CancellationToken cancellationToken)
         {
             var product = await _unitOfWork.Products.GetAsync(request.Id, cancellationToken);
 
@@ -28,7 +28,6 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
             await _unitOfWork.Products.DeleteAsync(product.ProductId, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
 
-            return $"{request.Id} was deleted";
         }
     }
 }

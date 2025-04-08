@@ -9,7 +9,7 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
     /// <summary>
     /// Обработчик команды для добавления продукта.
     /// </summary>
-    public class AddCategoryCommandHandler : IRequestHandler<AddCategoryCommand, string>
+    public class AddCategoryCommandHandler : IRequestHandler<AddCategoryCommand>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -20,9 +20,9 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
             _mapper = mapper;
         }
 
-        public async Task<string> Handle(AddCategoryCommand request, CancellationToken cancellationToken)
+        public async Task Handle(AddCategoryCommand request, CancellationToken cancellationToken)
         {
-            var category = _mapper.Map<Category>(request.Category);
+            var category = new Category { CategoryName = request.CategoryName};
 
             if(category == null)
             {
@@ -33,13 +33,12 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
 
             if (exist)
             {
-                return "already exist";
+                throw new ArgumentException("Already exist");
             }
 
             await _unitOfWork.Categories.AddAsync(category, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
 
-            return "Category was added";
         }
     }
 }

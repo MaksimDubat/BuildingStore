@@ -1,4 +1,5 @@
 
+using ProductService.Infrastructure.Middleware;
 using ProductService.WebAPI.Registrations;
 
 namespace ProductService
@@ -27,6 +28,8 @@ namespace ProductService
             }
 
             app.UseHttpsRedirection();
+
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             app.UseAuthorization();
 

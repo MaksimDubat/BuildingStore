@@ -9,42 +9,50 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Обработчик команды для обновления продукта.
     /// </summary>
-    public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, string>
+    public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public UpdateProductCommandHandler(IUnitOfWork unitOfWork)
+        public UpdateProductCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
-        public async Task<string> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
+        public async Task Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
             var product = await _unitOfWork.Products.GetAsync(request.Id, cancellationToken);
 
             if (product == null)
             {
-                return "Not found";
+                throw new KeyNotFoundException("not found");
             }
 
-            var isDuplicate = await _unitOfWork.Products.IsProductExistOrDuplicateAsync(product, cancellationToken);
+            var requestProduct = _mapper.Map<Product>(request.Product);
+
+            if (requestProduct == null)
+            {
+                throw new ArgumentNullException("object is empty");
+            }
+
+            var isDuplicate = await _unitOfWork.Products.IsProductExistOrDuplicateAsync(requestProduct, cancellationToken);
 
             if (isDuplicate)
             {
-                return "Duplicate";
+                throw new ArgumentException("Already exist");
             }
 
-            product.Name = request.Product.Name;
-            product.Description = request.Product.Description;
-            product.CategoryId = request.Product.CategoryId;
-            product.Price = request.Product.Price;
-            product.ImageURL = request.Product.ImageURL;
-            product.Amount = request.Product.Amount;
+            product.Name = requestProduct.Name;
+            product.Description = requestProduct.Description;
+            product.CategoryId = requestProduct.CategoryId;
+            product.Price = requestProduct.Price;
+            product.ImageURL = requestProduct.ImageURL;
+            product.Amount = requestProduct.Amount;
 
             await _unitOfWork.Products.UpdateAsync(product, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
 
-            return "Product was updated";
         }
     }
 }

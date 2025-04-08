@@ -9,7 +9,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Обработчик команды для добавления продукта.
     /// </summary>
-    public class AddProductCommandHandler : IRequestHandler<AddProductCommand, string>
+    public class AddProductCommandHandler : IRequestHandler<AddProductCommand>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -20,7 +20,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
             _mapper = mapper;
         }
 
-        public async Task<string> Handle(AddProductCommand request, CancellationToken cancellationToken)
+        public async Task Handle(AddProductCommand request, CancellationToken cancellationToken)
         {
             var product = _mapper.Map<Product>(request.Product);
 
@@ -33,13 +33,12 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
 
             if (exist)
             {
-                return "Already Exist";
+                throw new ArgumentException("Already Exist");
             }
 
             await _unitOfWork.Products.AddAsync(product, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
 
-            return "Product was added";
         }
     }
 }
