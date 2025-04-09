@@ -1,4 +1,7 @@
 
+using ProductService.Infrastructure.Middleware;
+using ProductService.WebAPI.Registrations;
+
 namespace ProductService
 {
     public class Program
@@ -8,6 +11,7 @@ namespace ProductService
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            ProductServiceRegistrations.RegisterRepositories(builder.Services, builder.Configuration);
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -25,8 +29,9 @@ namespace ProductService
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
+            app.UseAuthorization();
 
             app.MapControllers();
 

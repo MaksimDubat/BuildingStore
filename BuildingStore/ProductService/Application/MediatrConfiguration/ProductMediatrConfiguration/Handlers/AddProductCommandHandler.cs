@@ -1,0 +1,46 @@
+﻿using AutoMapper;
+using MediatR;
+using ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Commands;
+using ProductService.Domain.Entities;
+using ProductService.Domain.Interfaces;
+
+namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Handlers
+{
+    /// <summary>
+    /// Обработчик команды для добавления продукта.
+    /// </summary>
+    public class AddProductCommandHandler : IRequestHandler<AddProductCommand>
+    {
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+
+        public AddProductCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        {
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+        }
+
+        public async Task Handle(AddProductCommand request, CancellationToken cancellationToken)
+        {
+            var product = _mapper.Map<Product>(request.Product);
+
+            if (product == null)
+            {
+                throw new ArgumentNullException("object is empty");
+            }
+
+            var exist = await _unitOfWork.Products.IsProductExistOrDuplicateAsync(product, cancellationToken);
+
+            if (exist)
+            {
+                throw new ArgumentException("Already Exist");
+            }
+
+            await _unitOfWork.Products.AddAsync(product, cancellationToken);
+            await _unitOfWork.CompleteAsync(cancellationToken);
+
+        }
+    }
+}
+
+
