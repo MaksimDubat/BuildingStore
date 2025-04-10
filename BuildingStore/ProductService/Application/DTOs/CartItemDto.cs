@@ -6,14 +6,9 @@
     public class CartItemDto
     {
         /// <summary>
-        /// Идентификатор корзины.
-        /// </summary>
-        public int CartId { get; set; }
-
-        /// <summary>
         /// Идентификатор продукта.
         /// </summary>
-        public int ProductId { get; set; }
+        public string ProductName { get; set; }
 
         /// <summary>
         /// Количество товара в корзине.
@@ -21,18 +16,8 @@
         public int Amount { get; set; }
 
         /// <summary>
-        /// Название продукта.
+        /// Продукт.
         /// </summary>
-        public string ProductName { get; set; }
-
-        /// <summary>
-        /// Цена продукта.
-        /// </summary>
-        public decimal Price { get; set; }
-
-        /// <summary>
-        /// Описание продукта.
-        /// </summary>
-        public string Description { get; set; }
+        public ProductDto? Product { get; set; }
     }
 }

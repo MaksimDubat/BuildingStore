@@ -48,5 +48,12 @@ namespace ProductService.Domain.Interfaces
         /// <param name="predicate"></param>
         /// <param name="cancellation"></param>
         Task<bool> AnyAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellation);
+
+        /// <summary>
+        /// Получение спецификации.
+        /// </summary>
+        /// <param name="specification"></param>
+        /// <param name="cancellation"></param>
+        Task<IEnumerable<T>> GetBySpecificationAsync(ISpecification<T> specification, CancellationToken cancellation);
     }
 }

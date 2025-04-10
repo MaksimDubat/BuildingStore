@@ -11,10 +11,14 @@ namespace ProductService.Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<CartItem> builder)
         {
-            builder.HasKey(c => new {c.CartId, c.ProductId});
+            builder.HasKey(c => new { c.CartId, c.ProductId });
+
+            builder.Property(c => c.ProductName)
+                .IsRequired();
 
             builder.Property(c => c.Amount)
-                .IsRequired();
+                .IsRequired()
+                .HasDefaultValue(1);
 
             builder.HasOne(c => c.Cart)
                 .WithMany(c => c.CartItems)

@@ -1,4 +1,6 @@
-﻿namespace ProductService.Application.DTOs
+﻿using ProductService.Domain.Enums;
+
+namespace ProductService.Application.DTOs
 {
     /// <summary>
     /// DTO для сущности заказа.
@@ -18,7 +20,7 @@
         /// <summary>
         /// Статус заказа.
         /// </summary>
-        public string Status { get; set; }
+        public OrderStatus Status { get; set; }
 
         /// <summary>
         /// Итоговая сумма.

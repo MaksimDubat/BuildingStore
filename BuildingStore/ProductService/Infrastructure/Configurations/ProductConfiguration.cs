@@ -27,6 +27,11 @@ namespace ProductService.Infrastructure.Configurations
                  .HasDefaultValueSql("CURRENT_TIMESTAMP");
             builder.Property(p =>p.UpdatedAt)
                  .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            builder.Property(p => p.SaleCode); 
+            builder.Property(p => p.SaleEndDate)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            builder.Property(p => p.SalePrice)
+                .HasPrecision(10, 2);
 
             builder.HasOne(p => p.Category)
                 .WithMany(p => p.Products)
@@ -37,11 +42,6 @@ namespace ProductService.Infrastructure.Configurations
                 .WithOne(p => p.Product)
                 .HasForeignKey(p => p.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasMany(p => p.Carts)
-              .WithOne(p => p.Product)
-              .HasForeignKey(c => c.ProductId)
-              .OnDelete(DeleteBehavior.Cascade);
 
         }
     }

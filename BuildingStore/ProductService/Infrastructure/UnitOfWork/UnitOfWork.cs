@@ -13,13 +13,21 @@ namespace ProductService.Infrastructure.UnitOfWork
 
         public IProductRepository Products { get; }
         public ICategoryRepository Categories { get; }
+        public ICartItemRepository CartItems { get; }
+        public ICartRepository Carts { get; }
 
-        public UnitOfWork(MutableDbContext context, IServiceProvider serviceProvider, IProductRepository products, ICategoryRepository categories)
+        public IOrderRepository Orders { get; }
+
+        public UnitOfWork(MutableDbContext context, IServiceProvider serviceProvider, IProductRepository products, 
+            ICategoryRepository categories, ICartItemRepository cartItems, ICartRepository carts, IOrderRepository orders)
         {
             _context = context;
             _serviceProvider = serviceProvider;
             Products = products;
             Categories = categories;
+            CartItems = cartItems;
+            Carts = carts;
+            Orders = orders;
         }
 
         /// <inheritdoc/>

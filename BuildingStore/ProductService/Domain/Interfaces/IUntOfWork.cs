@@ -16,6 +16,21 @@
         ICategoryRepository Categories { get; }
 
         /// <summary>
+        /// Репозиторий по работе с продуктами в корзине.
+        /// </summary>
+        ICartItemRepository CartItems { get; }
+
+        /// <summary>
+        /// Репозиторий по работе с корзиной.
+        /// </summary>
+        ICartRepository Carts { get; }
+
+        /// <summary>
+        /// Репозиторий по работе с заказми.
+        /// </summary>
+        IOrderRepository Orders { get; }
+
+        /// <summary>
         /// Завершение операции.
         /// </summary>
         /// <param name="cancellation"></param>

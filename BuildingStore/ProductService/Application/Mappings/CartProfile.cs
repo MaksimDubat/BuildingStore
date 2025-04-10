@@ -12,23 +12,14 @@ namespace ProductService.Application.Mappings
         public CartProfile()
         {
             CreateMap<Cart, CartDto>()
-                .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product))
                 .ForMember(dest => dest.CartId, opt => opt.MapFrom(src => src.CartId))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
-                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
-                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount));
+                .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.CartItems));
 
             CreateMap<CartDto, Cart>()
                 .ForMember(dest => dest.CartId, opt => opt.MapFrom(src => src.CartId))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
-                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
-                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
-                .ForMember(dest => dest.Product, opt => opt.MapFrom(src => new Product
-                {
-                    Name = src.Product.Name,
-                    Price = src.Product.Price,
-                    Description = src.Product.Description
-                }));
+                .ForMember(dest => dest.CartItems, opt => opt.MapFrom(src => src.Items));
         }
     }
 }

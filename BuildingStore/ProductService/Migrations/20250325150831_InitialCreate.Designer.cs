@@ -12,7 +12,7 @@ using ProductService.Infrastructure.DataBase;
 namespace ProductService.Migrations
 {
     [DbContext(typeof(MutableDbContext))]
-    [Migration("20250313111500_InitialCreate")]
+    [Migration("20250325150831_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -33,10 +33,7 @@ namespace ProductService.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CartId"));
 
-                    b.Property<int>("Amount")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ProductId")
+                    b.Property<int?>("ProductId")
                         .HasColumnType("integer");
 
                     b.Property<int>("UserId")
@@ -58,7 +55,9 @@ namespace ProductService.Migrations
                         .HasColumnType("integer");
 
                     b.Property<int>("Amount")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1);
 
                     b.HasKey("CartId", "ProductId");
 
@@ -77,8 +76,7 @@ namespace ProductService.Migrations
 
                     b.Property<string>("CategoryName")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("text");
 
                     b.HasKey("CategoryId");
 
@@ -100,8 +98,7 @@ namespace ProductService.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("text");
 
                     b.Property<decimal>("TotalPrice")
                         .HasPrecision(10, 2)
@@ -230,13 +227,9 @@ namespace ProductService.Migrations
 
             modelBuilder.Entity("ProductService.Domain.Entities.Cart", b =>
                 {
-                    b.HasOne("ProductService.Domain.Entities.Product", "Product")
+                    b.HasOne("ProductService.Domain.Entities.Product", null)
                         .WithMany("Carts")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
+                        .HasForeignKey("ProductId");
                 });
 
             modelBuilder.Entity("ProductService.Domain.Entities.CartItem", b =>

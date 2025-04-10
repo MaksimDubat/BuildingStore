@@ -34,8 +34,9 @@ namespace ProductService.Infrastructure.Repositories
         /// <inheritdoc/>
         public async Task<T> DeleteAsync(int id, CancellationToken cancellation)
         {
-            var entity = await _context.Set<T>().FindAsync(id, cancellation);
+            var entity = await _context.Set<T>().FindAsync(id);
             _context.Remove(entity);
+
             return entity;
         }
 
@@ -45,6 +46,7 @@ namespace ProductService.Infrastructure.Repositories
             var result = await _context.Set<T>()
                 .AsNoTracking()
                 .ToListAsync(cancellation);
+
             return result;
         }
 
@@ -52,6 +54,15 @@ namespace ProductService.Infrastructure.Repositories
         public async Task<T> GetAsync(int id, CancellationToken cancellation)
         {
             return await _context.Set<T>().FindAsync(id, cancellation);
+        }
+
+        // <inheritdoc/>
+        public async Task<IEnumerable<T>> GetBySpecificationAsync(ISpecification<T> specification, CancellationToken cancellation)
+        {
+            IQueryable<T> query = _context.Set<T>()
+                .Where(specification.Criteria);
+
+            return await query.AsNoTracking().ToListAsync(cancellation);
         }
 
         /// <inheritdoc/>

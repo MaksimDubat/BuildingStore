@@ -177,5 +177,14 @@ namespace ProductService.WebAPI.Controllers
             var products = await _mediator.Send(new GetProductsWithSaleQuery(), cancellation);
             return Ok(products);
         }
+
+        [HttpGet("recomendations")]
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetRecomendedProducts(int bathRoom, int toiletRoom, int floorHeatingRooms, 
+        int amoutnOfTaps, int amountOfWashingMachines, int amountOfDishWashinfMachines, int amountOfSewers, double totalArea, CancellationToken cancellation)
+        {
+            var result = await _mediator.Send(new GetProductsFromFormQuery(bathRoom, toiletRoom, floorHeatingRooms, amoutnOfTaps, 
+               amountOfWashingMachines, amountOfDishWashinfMachines, amountOfSewers, totalArea), cancellation);  
+            return Ok(result);
+        }
     }
 }

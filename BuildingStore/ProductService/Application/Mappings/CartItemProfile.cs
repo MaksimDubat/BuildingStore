@@ -12,23 +12,14 @@ namespace ProductService.Application.Mappings
         public CartItemProfile()
         {
             CreateMap<CartItem, CartItemDto>()
-                .ForMember(dest => dest.CartId, opt => opt.MapFrom(src => src.CartId))
-                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
-                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
-                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
-                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Product.Price))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Product.Description));
+               .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.ProductName))
+               .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
+               .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product));
 
             CreateMap<CartItemDto, CartItem>()
-                .ForMember(dest => dest.CartId, opt => opt.MapFrom(src => src.CartId))
-                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.ProductName))
                 .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
-                .ForMember(dest => dest.Product, opt => opt.MapFrom(src => new Product
-                {
-                    Name = src.ProductName,
-                    Price = src.Price,
-                    Description = src.Description
-                }));
+                .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product));
         }
     }
 }

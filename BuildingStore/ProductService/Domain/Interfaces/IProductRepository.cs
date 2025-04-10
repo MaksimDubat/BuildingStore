@@ -21,5 +21,26 @@ namespace ProductService.Domain.Interfaces
         /// <param name="cancellation"></param>
         Task<bool> IsProductExistOrDuplicateAsync(Product product, CancellationToken cancellation);
 
+        /// <summary>
+        /// Получение товаров без скидок.
+        /// </summary>
+        /// <param name="product"></param>
+        /// <param name="cancellation"></param>
+        Task<IEnumerable<Product>> GetProductsWithoutSale(CancellationToken cancellation);
+
+        /// <summary>
+        /// Получение товаров со скидкой. 
+        /// </summary>
+        /// <param name="cancellation"></param>
+        /// <returns></returns>
+        Task<IEnumerable<Product>> GetProductsWithSale(CancellationToken cancellation);
+
+        /// <summary>
+        /// Получение продуктов с истекшими скидками.
+        /// </summary>
+        /// <param name="cancellation"></param>
+        /// <returns></returns>
+        Task<IEnumerable<Product>> GetExpiredSalesAsync(CancellationToken cancellation);
+
     }
 }

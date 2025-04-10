@@ -28,6 +28,30 @@ namespace ProductService.Infrastructure.Repositories
         }
 
         /// <inheritdoc/>
+        public async Task<IEnumerable<Product>> GetExpiredSalesAsync(CancellationToken cancellation)
+        {
+            return await _context.Products
+                .Where(x => x.SaleEndDate.HasValue && x.SaleEndDate < DateTime.UtcNow)
+                .ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<Product>> GetProductsWithoutSale(CancellationToken cancellation)
+        {
+            return await _context.Products
+                .Where(x => x.SalePrice == null && x.SaleEndDate == null && x.SaleCode == null)
+                .ToListAsync(cancellation);
+        }
+
+        // <inheritdoc/>
+        public async Task<IEnumerable<Product>> GetProductsWithSale(CancellationToken cancellation)
+        {
+            return await _context.Products
+                .Where(x => string.IsNullOrEmpty(x.SaleCode) && x.SalePrice != null)
+                .ToListAsync(cancellation);
+        }
+
+        /// <inheritdoc/>
         public async Task<bool> IsProductExistOrDuplicateAsync(Product product, CancellationToken cancellation)
         {
             return await _context.Products.AnyAsync(
@@ -38,6 +62,7 @@ namespace ProductService.Infrastructure.Repositories
                 x.ImageURL == product.ImageURL.ToLower() &&
                 x.Amount == product.Amount,
                 cancellation);
+
         }
     }
 }
