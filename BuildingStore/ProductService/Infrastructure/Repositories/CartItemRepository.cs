@@ -17,28 +17,6 @@ namespace ProductService.Infrastructure.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<CartItem> ChangeAmountAsync(int amount, int productId, int cartId, CancellationToken cancellation)
-        {
-            var product = await _context.CartItems
-                .FirstOrDefaultAsync(ci => ci.CartId == cartId && ci.ProductId == productId, cancellation);   
-
-            product.Amount = amount;
-            
-            return product;
-        }
-
-        /// <inheritdoc/>
-        public async Task<CartItem> DeleteCartItemAsync(int cartId, int productId, CancellationToken cancellation)
-        {
-            var product = await _context.CartItems
-                .FirstOrDefaultAsync(ci => ci.CartId == cartId && ci.ProductId == productId, cancellation);
-
-            _context.Remove(product);
-
-            return product;
-        }
-
-        /// <inheritdoc/>
         public async Task<List<CartItem>> GetCartItemsAsync(int cartId, CancellationToken cancellation)
         {
             return await _context.CartItems

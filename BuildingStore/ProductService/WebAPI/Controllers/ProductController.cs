@@ -179,11 +179,18 @@ namespace ProductService.WebAPI.Controllers
         }
 
         [HttpGet("recomendations")]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetRecomendedProducts(int bathRoom, int toiletRoom, int floorHeatingRooms, 
-        int amoutnOfTaps, int amountOfWashingMachines, int amountOfDishWashinfMachines, int amountOfSewers, double totalArea, CancellationToken cancellation)
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetRecomendedProducts([FromQuery] FormDto form, CancellationToken cancellation)
         {
-            var result = await _mediator.Send(new GetProductsFromFormQuery(bathRoom, toiletRoom, floorHeatingRooms, amoutnOfTaps, 
-               amountOfWashingMachines, amountOfDishWashinfMachines, amountOfSewers, totalArea), cancellation);  
+            var result = await _mediator.Send(new GetProductsFromFormQuery(
+                form.BathRoom,
+                form.ToiletRoom,
+                form.FloorHeatingRooms,
+                form.AmoutnOfTaps,
+                form.AmountOfWashingMachines,
+                form.AmountOfDishWashinfMachines,
+                form.AmountOfSewers,
+                form.TotalArea
+                ),cancellation);  
             return Ok(result);
         }
     }

@@ -20,25 +20,25 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
 
         public async Task<RecomendationsDto> Handle(GetProductsFromFormQuery request, CancellationToken cancellationToken)
         {
-            if(request.BathRoom <= 0 || request.ToiletRoom <= 0 || request.FloorHeatingRooms <=0 || request.AmoutnOfTaps <=0 || request.AmountOfWashingMachines <= 0 ||
+            if (request.BathRoom <= 0 || request.ToiletRoom <= 0 || request.FloorHeatingRooms <= 0 || request.AmoutnOfTaps <= 0 || request.AmountOfWashingMachines <= 0 ||
                 request.AmountOfDishWashinfMachines <= 0 || request.AmountOfSewers <= 0 || request.TotalArea <= 0)
             {
                 throw new ArgumentException("Wrong number");
             }
 
-            var calculations = new Dictionary<int, CalculationDto>()
+            var calculations = new Dictionary<int, CalculationDto>
             {
-                {1, new CalculationDto {CategoryKey = 8, Description = "Amount of baths", Amount = request.BathRoom } },
-                {2, new CalculationDto {CategoryKey = 4, Description = "Amount of screws for baths", Amount = request.BathRoom * 15 } },
-                {3, new CalculationDto {CategoryKey = 9, Description = "Amount of toilets", Amount = request.ToiletRoom } },
-                {4, new CalculationDto {CategoryKey = 4, Description = "Amount of screws for baths", Amount = request.ToiletRoom * 15 } },
-                {5, new CalculationDto {CategoryKey = 6, Description = "Amount of screws for baths", Amount = request.FloorHeatingRooms * 15 } },
-                {6, new CalculationDto {CategoryKey = 12, Description = "Amount of taps", Amount = request.AmoutnOfTaps } },
-                {7, new CalculationDto {CategoryKey = 7, Description = "Amount of screws for baths", Amount = request.AmoutnOfTaps * 5 } },
-                {8, new CalculationDto {CategoryKey = 4, Description = "Amount of washingmachines", Amount = request.AmountOfWashingMachines } },
-                {9, new CalculationDto {CategoryKey = 4, Description = "Amount of screws for washingmachine", Amount = request.AmountOfWashingMachines * 5 } },
-                {10, new CalculationDto {CategoryKey = 4, Description = "Amount of screws for washingmachine", Amount = request.AmountOfWashingMachines * 15 } },
-                {11, new CalculationDto {CategoryKey = 4, Description = "Amount of screws for washingmachine", Amount = request.AmountOfWashingMachines * 15 } },
+                {1, new CalculationDto (8, "Amount of baths", request.BathRoom ) },
+                {2, new CalculationDto (4, "Amount of screws for baths", request.BathRoom * 15 ) },
+                {3, new CalculationDto (9, "Amount of toilets", request.ToiletRoom ) },
+                {4, new CalculationDto (4, "Amount of screws for baths", request.ToiletRoom * 15 ) },
+                {5, new CalculationDto (6, "Amount of screws for baths", request.FloorHeatingRooms * 15 ) },
+                {6, new CalculationDto (12, "Amount of taps",   request.AmoutnOfTaps ) },
+                {7, new CalculationDto (7, "Amount of screws for baths", request.AmoutnOfTaps * 5 ) },
+                {8, new CalculationDto (4, "Amount of washingmachines", request.AmountOfWashingMachines ) },
+                {9, new CalculationDto (4, "Amount of screws for washingmachine", request.AmountOfWashingMachines * 5 ) },
+                {10, new CalculationDto (4, "Amount of screws for washingmachine", request.AmountOfWashingMachines * 15 ) },
+                {11, new CalculationDto (4, "Amount of screws for washingmachine", request.AmountOfWashingMachines * 15 ) },
 
             };
 

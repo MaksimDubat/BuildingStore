@@ -18,7 +18,7 @@ namespace ProductService.Application.MediatrConfiguration.CartMediatrConfigurati
 
         public async Task Handle(ChangeAmountOfProductCommand request, CancellationToken cancellationToken)
         {
-            var item = await _unitOfWork.CartItems.ChangeAmountAsync(request.Amount, request.ProductId, request.CartId, cancellationToken);
+            var item = await _unitOfWork.CartItems.GetCartItemAsync(request.CartId, request.ProductId, cancellationToken);
 
             if (item == null)
             {
@@ -29,6 +29,8 @@ namespace ProductService.Application.MediatrConfiguration.CartMediatrConfigurati
             {
                 throw new ArgumentException("amount should be more than 0");
             }
+
+            item.Amount = request.Amount;
 
             await _unitOfWork.CompleteAsync(cancellationToken);
 

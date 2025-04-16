@@ -34,9 +34,16 @@ namespace ProductService.Infrastructure.Repositories
         /// <inheritdoc/>
         public async Task<T> DeleteAsync(int id, CancellationToken cancellation)
         {
-            var entity = await _context.Set<T>().FindAsync(id);
+            var entity = await _context.Set<T>().FindAsync(id, cancellation);
             _context.Remove(entity);
 
+            return entity;
+        }
+
+        /// <inheritdoc/>
+        public async Task<T> DeleteEntityAsync(T entity, CancellationToken cancellation)
+        {
+            _context.Remove(entity);
             return entity;
         }
 

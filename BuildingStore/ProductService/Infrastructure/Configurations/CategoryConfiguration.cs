@@ -18,7 +18,7 @@ namespace ProductService.Infrastructure.Configurations
             builder.HasMany(c => c.Products)
                 .WithOne(c => c.Category)
                 .HasForeignKey(c => c.CategoryId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
