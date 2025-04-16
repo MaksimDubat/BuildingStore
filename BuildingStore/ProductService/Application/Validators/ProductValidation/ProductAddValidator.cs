@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Commands;
+using ProductService.Application.Validators.CustomValidatorRules;
 
 namespace ProductService.Application.Validators.ProductValidation
 {
@@ -10,19 +11,9 @@ namespace ProductService.Application.Validators.ProductValidation
     {
         public ProductAddValidator()
         {
-            RuleFor(x => x.Product.Name)
-                .NotEmpty()
-                .Matches(@"^[a-zA-Zа-яА-Я\s]+$").WithMessage("Only Latin or Cyrillic")
-                .Matches(@"^[^<>]+$").WithMessage("not alloed < or >")
-                .MinimumLength(3).WithMessage("no smaller than 3")
-                .MaximumLength(100).WithMessage("no longer than 100");
+            RuleFor(x => x.Product.Name).ValidString();
 
-            RuleFor(x => x.Product.Description)
-                .NotEmpty()
-                .Matches(@"^[a-zA-Zа-яА-Я\s]+$").WithMessage("Only Latin or Cyrillic")
-                .Matches(@"^[^<>]+$").WithMessage("not alloed < or >")
-                .MinimumLength(3).WithMessage("no smaller than 3")
-                .MaximumLength(500).WithMessage("no longer than 500");
+            RuleFor(x => x.Product.Description).ValidString();
 
             RuleFor(x => x.Product.CategoryId)
                 .NotEmpty()

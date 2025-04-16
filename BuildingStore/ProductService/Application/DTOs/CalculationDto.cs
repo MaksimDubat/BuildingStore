@@ -1,7 +1,9 @@
-﻿namespace ProductService.Application.DTOs
+﻿using ProductService.Domain.Enums;
+
+namespace ProductService.Application.DTOs
 {
     /// <summary>
     /// DTO для вычисления рекомендованных параметров.
     /// </summary>
-    public record CalculationDto(int CategoryKey, string Description, int Amount);
+    public record CalculationDto(CategoryType CategoryKey, string Description, int Amount);
 }

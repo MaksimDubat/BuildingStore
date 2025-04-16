@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using ProductService.Application.MediatrConfiguration.CategoryMediatrConfiguration.Commands;
+using ProductService.Application.Validators.CustomValidatorRules;
 
 namespace ProductService.Application.Validators.CategoryValidation
 {
@@ -10,12 +11,7 @@ namespace ProductService.Application.Validators.CategoryValidation
     {
         public CategoryUpdateValidator()
         {
-            RuleFor(x => x.CategoryName)
-                .NotEmpty()
-                .Matches(@"^[a-zA-Zа-яА-Я\s]+$").WithMessage("Only Latin or Cyrillic")
-                .Matches(@"^[^<>]+$").WithMessage("not alloed < or >")
-                .MinimumLength(3).WithMessage("no smaller than 3")
-                .MaximumLength(20).WithMessage("no longer than 20");
+            RuleFor(x => x.CategoryName).ValidString();
         }
     }
 }
