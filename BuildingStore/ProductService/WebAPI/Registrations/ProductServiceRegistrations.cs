@@ -34,6 +34,8 @@ namespace ProductService.WebAPI.Registrations
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 
+            services.AddScoped<PdfGenerationService>();
+
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddTransient<IValidator<AddCategoryCommand>, CategoryAddValidator>();

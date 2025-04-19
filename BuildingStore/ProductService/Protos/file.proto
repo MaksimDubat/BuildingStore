@@ -1,0 +1,19 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "PdfGenerator.Grpc";
+
+service PdfGeneratorService {
+  rpc GeneratePdfForOrder (OrderIdRequest) returns (PdfResponse);
+  rpc GeneratePdfForAllOrders (EmptyRequest) returns (PdfResponse);
+}
+
+message OrderIdRequest {
+  int32 orderId = 1;
+}
+
+message EmptyRequest {}
+
+message PdfResponse {
+  bytes pdfContent = 1;
+  string fileName = 2;
+}
