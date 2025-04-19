@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using ProductService.Application.DTOs;
 using ProductService.Application.MediatrConfiguration.CategoryMediatrConfiguration.Commands;
 using ProductService.Application.MediatrConfiguration.CategoryMediatrConfiguration.Queries;
-using ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Commands;
 
 namespace ProductService.WebAPI.Controllers
 {

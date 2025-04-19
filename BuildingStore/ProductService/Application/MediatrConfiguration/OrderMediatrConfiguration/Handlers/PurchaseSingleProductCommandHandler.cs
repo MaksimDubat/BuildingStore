@@ -69,7 +69,7 @@ namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfigurat
             product.Amount -= cartItem.Amount;
             await _unitOfWork.Products.UpdateAsync(product, cancellationToken);
 
-            await _unitOfWork.CartItems.DeleteCartItemAsync(cartItem.CartId, cartItem.ProductId, cancellationToken);
+            await _unitOfWork.CartItems.DeleteEntityAsync(cartItem, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
 
         }

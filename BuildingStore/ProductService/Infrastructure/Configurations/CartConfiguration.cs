@@ -12,17 +12,9 @@ namespace ProductService.Infrastructure.Configurations
         public void Configure(EntityTypeBuilder<Cart> builder)
         {
             builder.HasKey(c => c.CartId);
+
             builder.Property(c => c.UserId)
                 .IsRequired();
-            builder.Property(c => c.ProductId)
-                .IsRequired();
-            builder.Property(c => c.Amount)
-                .IsRequired();
-
-            builder.HasOne(c => c.Product)
-                .WithMany(c => c.Carts)
-                .HasForeignKey(c => c.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasMany(c => c.CartItems)
                 .WithOne(c => c.Cart)

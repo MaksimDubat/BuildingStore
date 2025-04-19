@@ -36,7 +36,7 @@ namespace ProductService.Domain.Interfaces
         Task UpdateAsync(T entity, CancellationToken cancellation);
 
         /// <summary>
-        /// Удаление сущности.
+        /// Удаление сущности по идентификатору.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="cancellation"></param>
@@ -48,5 +48,20 @@ namespace ProductService.Domain.Interfaces
         /// <param name="predicate"></param>
         /// <param name="cancellation"></param>
         Task<bool> AnyAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellation);
+
+        /// <summary>
+        /// Получение спецификации.
+        /// </summary>
+        /// <param name="specification"></param>
+        /// <param name="cancellation"></param>
+        Task<IEnumerable<T>> GetBySpecificationAsync(ISpecification<T> specification, CancellationToken cancellation);
+
+        /// <summary>
+        /// Удаление сущности.
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="cancellation"></param>
+        /// <returns></returns>
+        Task<T> DeleteEntityAsync(T entity, CancellationToken cancellation);
     }
 }

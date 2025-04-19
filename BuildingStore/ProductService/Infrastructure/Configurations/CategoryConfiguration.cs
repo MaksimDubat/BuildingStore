@@ -13,13 +13,12 @@ namespace ProductService.Infrastructure.Configurations
         {
             builder.HasKey(c => c.CategoryId);
             builder.Property(c => c.CategoryName)
-                .IsRequired()
-                .HasMaxLength(100);
+                .IsRequired();
 
             builder.HasMany(c => c.Products)
                 .WithOne(c => c.Category)
                 .HasForeignKey(c => c.CategoryId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

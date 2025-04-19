@@ -9,18 +9,27 @@
         /// Идентификатор корзины.
         /// </summary>
         public int CartId { get; set; }
+
         /// <summary>
         /// Идентификатор продукта.
         /// </summary>
         public int ProductId { get; set; }
+
+        /// <summary>
+        /// Наименование продукта.
+        /// </summary>
+        public string ProductName { get; set; }
+
         /// <summary>
         /// Количество.
         /// </summary>
         public int Amount { get; set; }
+
         /// <summary>
         /// Корзина.
         /// </summary>
         public Cart Cart { get; set; }
+
         /// <summary>
         /// Продукты.
         /// </summary>

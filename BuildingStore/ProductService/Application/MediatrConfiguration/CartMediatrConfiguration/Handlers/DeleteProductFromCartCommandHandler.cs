@@ -18,14 +18,14 @@ namespace ProductService.Application.MediatrConfiguration.CartMediatrConfigurati
 
         public async Task Handle(DeleteProductFromCartCommand request, CancellationToken cancellationToken)
         {
-            var cartItem = await _unitOfWork.CartItems.
-                DeleteCartItemAsync(request.CartId, request.ProductId, cancellationToken);
-
+            var cartItem = await _unitOfWork.CartItems.GetCartItemAsync(request.CartId, request.ProductId, cancellationToken);
+               
             if (cartItem == null)
             {
                 throw new KeyNotFoundException($"Product {request.ProductId} not found in cart {request.CartId}.");
             }
 
+            await _unitOfWork.CartItems.DeleteEntityAsync(cartItem, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
 
         }

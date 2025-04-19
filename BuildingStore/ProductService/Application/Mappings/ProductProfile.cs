@@ -17,7 +17,11 @@ namespace ProductService.Application.Mappings
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
                 .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => src.ImageURL))
-                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount));
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
+                .ForMember(dest => dest.SalePrice, opt => opt.MapFrom(src => src.SalePrice))
+                .ForMember(dest => dest.SaleEndDate, opt => opt.MapFrom(src => src.SaleEndDate));
+           
+                
 
             CreateMap<ProductDto, Product>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
@@ -25,7 +29,9 @@ namespace ProductService.Application.Mappings
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
                 .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => src.ImageURL))
-                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount));
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
+                .ForMember(dest => dest.SalePrice, opt => opt.MapFrom(src => src.SalePrice))
+                .ForMember(dest => dest.SaleEndDate, opt => opt.MapFrom(src => src.SaleEndDate));
         }
     }
 }

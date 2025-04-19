@@ -177,5 +177,17 @@ namespace ProductService.WebAPI.Controllers
             var products = await _mediator.Send(new GetProductsWithSaleQuery(), cancellation);
             return Ok(products);
         }
+
+        /// <summary>
+        /// Получение рекомендаций из формы.
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="cancellation"></param>
+        [HttpGet("recomendations")]
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetRecomendedProducts([FromQuery] GetProductsFromFormQuery query, CancellationToken cancellation)
+        {
+            var result = await _mediator.Send(query,cancellation);  
+            return Ok(result);
+        }
     }
 }

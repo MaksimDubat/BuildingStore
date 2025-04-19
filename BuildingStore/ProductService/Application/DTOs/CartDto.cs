@@ -11,21 +11,15 @@ namespace ProductService.Application.DTOs
         /// Идентификатор корзины.
         /// </summary>
         public int CartId { get; set; }
+
         /// <summary>
         /// Идентификатор пользователя.
         /// </summary>
         public int UserId { get; set; }
+
         /// <summary>
-        /// Идентификатор продукта.
+        /// Список товаров в корзине.
         /// </summary>
-        public int ProductId { get; set; }
-        /// <summary>
-        /// Количество товаров.
-        /// </summary>
-        public int Amount { get; set; }
-        /// <summary>
-        /// Продукт.
-        /// </summary>
-        public Product Product { get; set; }
+        public List<CartItemDto>? Items { get; set; } = new();
     }
 }

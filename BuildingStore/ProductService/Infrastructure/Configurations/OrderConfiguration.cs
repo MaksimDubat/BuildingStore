@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ProductService.Domain.Entities;
+using ProductService.Domain.Enums;
 
 namespace ProductService.Infrastructure.Configurations
 {
@@ -15,8 +16,9 @@ namespace ProductService.Infrastructure.Configurations
             builder.Property(o => o.UserId)
                 .IsRequired();
             builder.Property(o => o.Status)
-                .IsRequired()
-                .HasMaxLength(50);
+                .IsRequired().HasConversion(
+                x => x.ToString(), 
+                x => (OrderStatus)Enum.Parse(typeof(OrderStatus), x));
             builder.Property(o => o.TotalPrice)
                 .IsRequired()
                 .HasPrecision(10, 2);
