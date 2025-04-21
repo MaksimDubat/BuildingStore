@@ -6,6 +6,9 @@ using ProductService.Domain.Interfaces;
 
 namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfiguration.Handlers
 {
+    /// <summary>
+    /// Обработчик запроса на формирование файла для всех заказов.
+    /// </summary>
     public class GeneratePdfForAllOrdersQueryHandler : IRequestHandler<GeneratePdfForAllOrdersQuery, (ByteString, string)>
     {
         private readonly IUnitOfWork _unitOfWork;
