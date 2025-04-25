@@ -30,6 +30,7 @@ namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfigurat
             }
 
             var pdfBytes = _pdfGenerationService.GeneratePdfForAllOrders(orders);
+
             return (ByteString.CopyFrom(pdfBytes), "all_orders.pdf");
         }
     }
