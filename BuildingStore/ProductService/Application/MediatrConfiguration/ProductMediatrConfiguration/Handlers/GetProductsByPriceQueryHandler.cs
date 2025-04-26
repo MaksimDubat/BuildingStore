@@ -11,7 +11,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Обработчик запроса на получение продуктов отсортированных по цене.
     /// </summary>
-    public class GetProductsByPriceQueryHandler : IRequestHandler<GetProductsByPriceQuery, IEnumerable<ProductDto>>
+    public class GetProductsByPriceQueryHandler : IRequestHandler<GetProductsByPriceQuery, IEnumerable<ProductResponseDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -22,7 +22,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ProductDto>> Handle(GetProductsByPriceQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<ProductResponseDto>> Handle(GetProductsByPriceQuery request, CancellationToken cancellationToken)
         {
             var specification = new ProductByPriceSpecification(request.MinPrice, request.MaxPrice, request.OrderBy);
 
@@ -49,7 +49,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
                  sortedProducts = products.OrderByDescending(x => x.Price);
             }
 
-            return _mapper.Map<IEnumerable<ProductDto>>(sortedProducts);
+            return _mapper.Map<IEnumerable<ProductResponseDto>>(sortedProducts);
         }
     }
 }

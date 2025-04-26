@@ -23,11 +23,6 @@ namespace ProductService.Application.Validators.ProductValidation
                 .NotEmpty()
                 .GreaterThan(0.01m).WithMessage("must be greater than 0");
 
-            RuleFor(x => x.Product.ImageURL)
-                .NotEmpty()
-                .Matches(@"\.(jpg|jpeg|png|gif)$").WithMessage("use types .jpg, .jpeg, .png or .gif");
-
-
             RuleFor(x => x.Product.Amount)
                 .NotEmpty()
                 .GreaterThan(0).WithMessage("must be greater than 0")

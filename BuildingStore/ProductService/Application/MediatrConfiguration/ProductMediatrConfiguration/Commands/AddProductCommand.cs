@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using ProductService.Application.DTOs;
+using ProductService.Application.Models.RequestModels;
 
 namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Commands
 {
@@ -12,6 +13,8 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
         /// Продукт.
         /// </summary>
         public ProductDto Product { get; set; }
+
+        public AddProductCommand() { }
 
         public AddProductCommand(ProductDto product)
         {

@@ -59,7 +59,6 @@ namespace ProductService.Infrastructure.Repositories
                 x.Name == product.Name.ToLower() &&
                 x.Description == product.Description.ToLower() &&
                 x.Price == product.Price &&
-                x.ImageURL == product.ImageURL.ToLower() &&
                 x.Amount == product.Amount,
                 cancellation);
 

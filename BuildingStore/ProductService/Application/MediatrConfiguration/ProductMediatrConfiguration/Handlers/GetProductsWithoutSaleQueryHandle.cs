@@ -7,7 +7,7 @@ using ProductService.Infrastructure.UnitOfWork;
 
 namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Handlers
 {
-    public class GetProductsWithoutSaleQueryHandle : IRequestHandler<GetProductsWithoutSaleQuery, IEnumerable<ProductDto>>
+    public class GetProductsWithoutSaleQueryHandle : IRequestHandler<GetProductsWithoutSaleQuery, IEnumerable<ProductResponseDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -18,7 +18,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ProductDto>> Handle(GetProductsWithoutSaleQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<ProductResponseDto>> Handle(GetProductsWithoutSaleQuery request, CancellationToken cancellationToken)
         {
             var products = await _unitOfWork.Products.GetProductsWithoutSale(cancellationToken);
 
@@ -27,7 +27,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
                 throw new KeyNotFoundException("not found products without sale");
             }
 
-            return _mapper.Map<IEnumerable<ProductDto>>(products);
+            return _mapper.Map<IEnumerable<ProductResponseDto>>(products);
         }
     }
 }

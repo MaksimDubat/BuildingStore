@@ -6,5 +6,5 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Модель запроса на получение товара по идентификатору.
     /// </summary>
-    public record GetProductByIdQuery(int Id) : IRequest<ProductDto>;
+    public record GetProductByIdQuery(int Id) : IRequest<ProductResponseDto>;
 }

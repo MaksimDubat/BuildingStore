@@ -21,7 +21,7 @@ namespace ProductService.Infrastructure.Configurations
             builder.Property(p => p.Price)
                 .HasPrecision(10, 2)
                 .IsRequired();
-            builder.Property(p => p.ImageURL)
+            builder.Property(p => p.Image)
                 .IsRequired();
             builder.Property(p => p.CreatedAt)
                  .HasDefaultValueSql("CURRENT_TIMESTAMP");

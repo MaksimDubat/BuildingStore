@@ -9,7 +9,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Обработчик запроса на получение всех продуктов.
     /// </summary>
-    public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, IEnumerable<ProductDto>>
+    public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, IEnumerable<ProductResponseDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -20,7 +20,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ProductDto>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<ProductResponseDto>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
         {
             var result = await _unitOfWork.Products.GetAllAsync(cancellationToken);
 
@@ -29,7 +29,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
                 throw new KeyNotFoundException("Not found");
             }
 
-            return _mapper.Map<IEnumerable<ProductDto>>(result);
+            return _mapper.Map<IEnumerable<ProductResponseDto>>(result);
         }
     }
 }

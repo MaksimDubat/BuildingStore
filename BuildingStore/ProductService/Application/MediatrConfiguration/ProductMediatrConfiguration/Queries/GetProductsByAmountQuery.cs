@@ -6,6 +6,6 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Модель запроса получения продуктов по наличию.
     /// </summary>
-    public record GetProductsByAmountQuery() : IRequest<IEnumerable<ProductDto>>;
+    public record GetProductsByAmountQuery() : IRequest<IEnumerable<ProductResponseDto>>;
 
 }

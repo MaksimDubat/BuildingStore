@@ -9,7 +9,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Обработчик запроса на получение продуктов со скидкой
     /// </summary>
-    public class GetProductsWithSaleQueryHandler : IRequestHandler<GetProductsWithSaleQuery, IEnumerable<ProductDto>>
+    public class GetProductsWithSaleQueryHandler : IRequestHandler<GetProductsWithSaleQuery, IEnumerable<ProductResponseDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -20,7 +20,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ProductDto>> Handle(GetProductsWithSaleQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<ProductResponseDto>> Handle(GetProductsWithSaleQuery request, CancellationToken cancellationToken)
         {
             var result = await _unitOfWork.Products.GetProductsWithSale(cancellationToken);
 
@@ -29,7 +29,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
                 throw new KeyNotFoundException("No products with sale");
             }
 
-            return _mapper.Map<IEnumerable<ProductDto>>(result); 
+            return _mapper.Map<IEnumerable<ProductResponseDto>>(result); 
         }
     }
 }

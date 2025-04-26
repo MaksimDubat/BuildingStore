@@ -1,9 +1,10 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ProductService.Application.DTOs;
 using ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Commands;
 using ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Queries;
-using ProductService.Infrastructure.Specifications;
+using ProductService.Application.Models.RequestModels;
 
 namespace ProductService.WebAPI.Controllers
 {
@@ -26,7 +27,7 @@ namespace ProductService.WebAPI.Controllers
         /// </summary>
         /// <param name="cancellation"></param>
         [HttpGet("Products")]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAllProducts(CancellationToken cancellation)
+        public async Task<ActionResult<IEnumerable<ProductResponseDto>>> GetAllProducts(CancellationToken cancellation)
         {
             var products = await _mediator.Send(new GetAllProductsQuery(), cancellation);
             return Ok(products);
@@ -38,7 +39,7 @@ namespace ProductService.WebAPI.Controllers
         /// <param name="id"></param>
         /// <param name="cancellation"></param>
         [HttpGet("product/{id}")]
-        public async Task<ActionResult<ProductDto>> GetProductById(int id, CancellationToken cancellation)
+        public async Task<ActionResult<ProductResponseDto>> GetProductById(int id, CancellationToken cancellation)
         {
             var product = await _mediator.Send(new GetProductByIdQuery(id), cancellation);
             return Ok(product);
@@ -50,7 +51,7 @@ namespace ProductService.WebAPI.Controllers
         /// <param name="name"></param>
         /// <param name="cancellation"></param>
         [HttpGet("product-name{name}")]
-        public async Task<ActionResult<ProductDto>> GetProductByName(string name, CancellationToken cancellation)
+        public async Task<ActionResult<ProductResponseDto>> GetProductByName(string name, CancellationToken cancellation)
         {
             var product = await _mediator.Send(new GetProductByNameQuery(name), cancellation);
             return Ok(product);
@@ -62,9 +63,20 @@ namespace ProductService.WebAPI.Controllers
         /// <param name="command"></param>
         /// <param name="cancellation"></param>
         [HttpPost]
-        public async Task<ActionResult<ProductDto>> AddProduct([FromBody] AddProductCommand command, CancellationToken cancellation)
+        public async Task<ActionResult<ProductDto>> AddProduct([FromForm] AddOrUpdateProductRequestModel model, CancellationToken cancellation)
         {
+            var command = new AddProductCommand(new ProductDto
+            {
+                Name = model.Name,
+                Description = model.Description,
+                CategoryId = model.CategoryId,
+                Price = model.Price,
+                Image = model.Image,
+                Amount = model.Amount,
+            });
+
             await _mediator.Send(command, cancellation);
+
             return Ok("Roduct was added");
         }
 
@@ -75,8 +87,18 @@ namespace ProductService.WebAPI.Controllers
         /// <param name="command"></param>
         /// <param name="cancellation"></param>
         [HttpPut("{id}")]
-        public async Task<ActionResult<ProductDto>> UpdateProduct(int id, [FromBody] UpdateProductCommand command, CancellationToken cancellation)
+        public async Task<ActionResult<ProductDto>> UpdateProduct(int id, [FromForm] AddOrUpdateProductRequestModel model, CancellationToken cancellation)
         {
+            var command = new UpdateProductCommand(id, new ProductDto
+            {
+                Name = model.Name,
+                Description = model.Description,
+                CategoryId = model.CategoryId,
+                Price = model.Price,
+                Image = model.Image,
+                Amount = model.Amount,
+            });
+
             await _mediator.Send(command, cancellation);
             return Ok("Product was updated");
         }
@@ -100,7 +122,7 @@ namespace ProductService.WebAPI.Controllers
         /// <param name="cancellation"></param>
         /// <returns></returns>
         [HttpGet("productsbycategory/{categoryName}")]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProductsByCategoryName(string categoryName,  CancellationToken cancellation)
+        public async Task<ActionResult<IEnumerable<ProductResponseDto>>> GetProductsByCategoryName(string categoryName,  CancellationToken cancellation)
         {
             var products = await _mediator.Send(new GetProductByCategoryQuery(categoryName), cancellation);
             return Ok(products);
@@ -113,7 +135,7 @@ namespace ProductService.WebAPI.Controllers
         /// <param name="maxPrice"></param>
         /// <param name="cancellation"></param>
         [HttpGet("productsbyprice")]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProductsByPrice(decimal minPrice, decimal maxPrice, bool orderBy, CancellationToken cancellation)
+        public async Task<ActionResult<IEnumerable<ProductResponseDto>>> GetProductsByPrice(decimal minPrice, decimal maxPrice, bool orderBy, CancellationToken cancellation)
         {
             var products = await _mediator.Send(new GetProductsByPriceQuery(minPrice, maxPrice, orderBy), cancellation);
             return Ok(products);
@@ -126,7 +148,7 @@ namespace ProductService.WebAPI.Controllers
         /// <param name="orderBy"></param>
         /// <param name="cancellation"></param>
         [HttpGet("productsbydate")]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducsByDate(int dayAgo, bool orderBy, CancellationToken cancellation)
+        public async Task<ActionResult<IEnumerable<ProductResponseDto>>> GetProducsByDate(int dayAgo, bool orderBy, CancellationToken cancellation)
         {
             var products = await _mediator.Send(new GetProductsByDateQuery(dayAgo, orderBy), cancellation);
             return Ok(products);
@@ -137,7 +159,7 @@ namespace ProductService.WebAPI.Controllers
         /// </summary>
         /// <param name="cancellation"></param>
         [HttpGet("availableproducts")]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAvailableProducts(CancellationToken cancellation)
+        public async Task<ActionResult<IEnumerable<ProductResponseDto>>> GetAvailableProducts(CancellationToken cancellation)
         {
             var products = await _mediator.Send(new GetProductsByAmountQuery(), cancellation);
             return Ok(products);
@@ -160,7 +182,7 @@ namespace ProductService.WebAPI.Controllers
         /// </summary>
         /// <param name="cancellation"></param>
         [HttpGet("nosale")]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProductsWithoutSale(CancellationToken cancellation)
+        public async Task<ActionResult<IEnumerable<ProductResponseDto>>> GetProductsWithoutSale(CancellationToken cancellation)
         {
             var products = await _mediator.Send(new GetProductsWithoutSaleQuery(), cancellation);
             return Ok(products);
@@ -172,7 +194,7 @@ namespace ProductService.WebAPI.Controllers
         /// <param name="cancellation"></param>
         /// <returns></returns>
         [HttpGet("sales")]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProductsWithSale(CancellationToken cancellation)
+        public async Task<ActionResult<IEnumerable<ProductResponseDto>>> GetProductsWithSale(CancellationToken cancellation)
         {
             var products = await _mediator.Send(new GetProductsWithSaleQuery(), cancellation);
             return Ok(products);
@@ -184,7 +206,7 @@ namespace ProductService.WebAPI.Controllers
         /// <param name="query"></param>
         /// <param name="cancellation"></param>
         [HttpGet("recomendations")]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetRecomendedProducts([FromQuery] GetProductsFromFormQuery query, CancellationToken cancellation)
+        public async Task<ActionResult<IEnumerable<ProductResponseDto>>> GetRecomendedProducts([FromQuery] GetProductsFromFormQuery query, CancellationToken cancellation)
         {
             var result = await _mediator.Send(query,cancellation);  
             return Ok(result);

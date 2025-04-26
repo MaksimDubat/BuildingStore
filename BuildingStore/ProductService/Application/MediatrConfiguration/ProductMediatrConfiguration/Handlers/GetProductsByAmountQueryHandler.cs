@@ -11,7 +11,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Обработчик запроса для получения продуктов по наличию.
     /// </summary>
-    public class GetProductsByAmountQueryHandler : IRequestHandler<GetProductsByAmountQuery, IEnumerable<ProductDto>>
+    public class GetProductsByAmountQueryHandler : IRequestHandler<GetProductsByAmountQuery, IEnumerable<ProductResponseDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -22,7 +22,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ProductDto>> Handle(GetProductsByAmountQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<ProductResponseDto>> Handle(GetProductsByAmountQuery request, CancellationToken cancellationToken)
         {
             var specification = new ProductByAmountSpecification();
 
@@ -33,7 +33,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
                 throw new KeyNotFoundException("Not Found");
             }
 
-            return _mapper.Map<IEnumerable<ProductDto>>(products);
+            return _mapper.Map<IEnumerable<ProductResponseDto>>(products);
         }
     }
 }

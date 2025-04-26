@@ -1,9 +1,11 @@
-﻿namespace ProductService.Application.DTOs
+﻿using ProductService.Application.DTOs;
+
+namespace ProductService.Application.Models.RequestModels
 {
     /// <summary>
-    /// DTO для сущности продукт.
+    /// Модель добавления или обновления продукта.
     /// </summary>
-    public class ProductDto
+    public class AddOrUpdateProductRequestModel
     {
         /// <summary>
         /// Наименование продукта.
@@ -34,5 +36,6 @@
         /// Количество.
         /// </summary>
         public int Amount { get; set; }
+
     }
 }
