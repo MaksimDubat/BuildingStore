@@ -1,4 +1,5 @@
-
+using PdfGenerator.Grpc;
+using ProductService.Application.Services;
 using ProductService.Infrastructure.Middleware;
 using ProductService.WebAPI.Registrations;
 
@@ -8,6 +9,8 @@ namespace ProductService
     {
         public static void Main(string[] args)
         {
+            QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
@@ -17,6 +20,8 @@ namespace ProductService
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddGrpc();
 
             var app = builder.Build();
 
@@ -30,6 +35,7 @@ namespace ProductService
             app.UseHttpsRedirection();
 
             app.UseMiddleware<ExceptionHandlingMiddleware>();
+;
 
             app.UseAuthorization();
 

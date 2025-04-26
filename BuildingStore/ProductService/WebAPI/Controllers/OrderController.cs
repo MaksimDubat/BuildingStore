@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using PdfGenerator.Grpc;
 using ProductService.Application.DTOs;
 using ProductService.Application.MediatrConfiguration.OrderMediatrConfiguration.Commands;
 using ProductService.Application.MediatrConfiguration.OrderMediatrConfiguration.Queries;
@@ -76,6 +77,72 @@ namespace ProductService.WebAPI.Controllers
         {
             var result = await _mediator.Send(new GetOrderByIdQuery(orderId), cancellation);
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Формирование документа определнного заказа.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="cancellation"></param>
+        [HttpGet("file")]
+        public async Task<PdfResponse> GetPdfFileOrder([FromQuery] OrderIdRequest request, CancellationToken cancellation)
+        {
+            var result = await _mediator.Send(new GeneratePdfForOrderQuery(request.OrderId), cancellation);
+            return new PdfResponse
+            {
+                PdfContent = result.PdfContent,
+                FileName = result.FileName
+            };
+        }
+
+        /// <summary>
+        /// Формирование документов для всех заказов.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="cancellation"></param>
+        /// <returns></returns>
+        [HttpGet("files")]
+        public async Task<PdfResponse> GetPdfFileOrders([FromQuery] EmptyRequest request, CancellationToken cancellation)
+        {
+            var result = await _mediator.Send(new GeneratePdfForAllOrdersQuery(), cancellation);
+            return new PdfResponse
+            {
+                PdfContent = result.PdfContent,
+                FileName = result.FileName
+            };
+        }
+
+        /// <summary>
+        /// Скачивание файла для всех заказов.
+        /// </summary>
+        /// <param name="cancellation"></param>
+        /// <returns></returns>
+        [HttpGet("downloadfiles")]
+        public async Task<IActionResult> DownloadPdfForAllOrders(CancellationToken cancellation)
+        {
+            var (pdfContent, fileName) = await _mediator.Send(new GeneratePdfForAllOrdersQuery(), cancellation);
+            return File(
+                pdfContent.ToByteArray(),          
+                "application/pdf",             
+                fileName                           
+            );
+        }
+
+        /// <summary>
+        /// Скачивание файла для опрделенного заказа.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="cancellation"></param>
+        /// <returns></returns>
+        [HttpGet("downloadfile")]
+        public async Task<IActionResult> DownloadPdfForOrder([FromQuery] OrderIdRequest request, CancellationToken cancellation)
+        {
+            var (pdfContent, fileName) = await _mediator.Send(new GeneratePdfForOrderQuery(request.OrderId), cancellation);
+            return File(
+                pdfContent.ToByteArray(),
+                "application/pdf",
+                fileName
+            );
         }
     }
 }
