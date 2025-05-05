@@ -17,7 +17,11 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
         private readonly ImageService _imageService;
         private readonly IWebHostEnvironment _environment;
 
-        public AddProductCommandHandler(IUnitOfWork unitOfWork, IMapper mapper, ImageService imageService, IWebHostEnvironment environment)
+        public AddProductCommandHandler(
+            IUnitOfWork unitOfWork, 
+            IMapper mapper, 
+            ImageService imageService, 
+            IWebHostEnvironment environment)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -48,6 +52,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
                     Path.Combine(_environment.WebRootPath, "images", "products"),
                     cancellationToken
                 );
+
                 product.Image = imagePath;
             }
 

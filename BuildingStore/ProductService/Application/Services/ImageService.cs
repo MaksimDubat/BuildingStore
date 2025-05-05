@@ -23,6 +23,7 @@ namespace ProductService.Application.Services
             Directory.CreateDirectory(saveDirectory);
 
             using var stream = file.OpenReadStream();
+
             using var image = await Image.LoadAsync(stream, cancellation);
 
             if(image.Width > 1000)
@@ -31,6 +32,7 @@ namespace ProductService.Application.Services
             }
 
             await image.SaveAsync(savePath, cancellation);
+
             return savePath;
         }
 
