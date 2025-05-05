@@ -33,7 +33,7 @@
         /// <summary>
         /// URL изображения.
         /// </summary>
-        public string ImageURL { get; set; }
+        public string Image { get; set; }
 
         /// <summary>
         /// Количество.
@@ -65,7 +65,7 @@
         /// </summary>
         public decimal? SalePrice { get; set; }
 
-    public Category Category { get; set; }
+        public Category Category { get; set; }
 
         public ICollection<Cart> Carts { get; set; } = new List<Cart>();
 

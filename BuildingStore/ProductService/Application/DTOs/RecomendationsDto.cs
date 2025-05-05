@@ -13,6 +13,6 @@
         /// <summary>
         /// Рекомендованные товары.
         /// </summary>
-        public IEnumerable<ProductDto> RecommendedProducts { get; set; }
+        public IEnumerable<ProductResponseDto> RecommendedProducts { get; set; }
     }
 }

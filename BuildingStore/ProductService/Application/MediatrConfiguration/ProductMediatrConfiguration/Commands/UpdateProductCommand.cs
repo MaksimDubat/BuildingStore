@@ -18,6 +18,8 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
         /// </summary>
         public ProductDto Product { get; set; } 
 
+        public UpdateProductCommand() { }
+
         public UpdateProductCommand(int id, ProductDto product)
         {
             Id = id;

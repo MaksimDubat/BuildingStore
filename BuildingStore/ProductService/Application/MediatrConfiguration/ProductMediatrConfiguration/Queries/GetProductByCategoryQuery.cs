@@ -6,6 +6,6 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Модель запроса на получение товаров по наименованию категории.
     /// </summary>
-    public record GetProductByCategoryQuery(string Name) : IRequest<IEnumerable<ProductDto>>;
+    public record GetProductByCategoryQuery(string Name) : IRequest<IEnumerable<ProductResponseDto>>;
 
 }

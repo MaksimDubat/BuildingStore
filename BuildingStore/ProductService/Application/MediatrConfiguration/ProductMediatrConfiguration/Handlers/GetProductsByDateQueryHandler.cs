@@ -11,7 +11,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Обработчик запроса на получение товаров по новизне за опредленный период.
     /// </summary>
-    public class GetProductsByDateQueryHandler : IRequestHandler<GetProductsByDateQuery, IEnumerable<ProductDto>>
+    public class GetProductsByDateQueryHandler : IRequestHandler<GetProductsByDateQuery, IEnumerable<ProductResponseDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -22,7 +22,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ProductDto>> Handle(GetProductsByDateQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<ProductResponseDto>> Handle(GetProductsByDateQuery request, CancellationToken cancellationToken)
         {
             var specification = new ProductByDateSpecification(request.DayAgo, request.OrderBy);
 
@@ -49,7 +49,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
                 sortedProducts = products.OrderByDescending(x => x.Price);
             }
 
-            return _mapper.Map<IEnumerable<ProductDto>>(sortedProducts);
+            return _mapper.Map<IEnumerable<ProductResponseDto>>(sortedProducts);
         }
     }
 }

@@ -18,6 +18,6 @@
         /// <summary>
         /// Продукт.
         /// </summary>
-        public ProductDto? Product { get; set; }
+        public ProductResponseDto? Product { get; set; }
     }
 }

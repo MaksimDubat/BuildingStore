@@ -11,24 +11,21 @@ namespace ProductService.Application.Mappings
     {
         public ProductProfile()
         {
-            CreateMap<Product, ProductDto>()
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
-                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
-                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => src.ImageURL))
-                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
-                .ForMember(dest => dest.SalePrice, opt => opt.MapFrom(src => src.SalePrice))
-                .ForMember(dest => dest.SaleEndDate, opt => opt.MapFrom(src => src.SaleEndDate));
-           
-                
 
             CreateMap<ProductDto, Product>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
-                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => src.ImageURL))
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image))
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount));
+
+            CreateMap<Product, ProductResponseDto>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image))
                 .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
                 .ForMember(dest => dest.SalePrice, opt => opt.MapFrom(src => src.SalePrice))
                 .ForMember(dest => dest.SaleEndDate, opt => opt.MapFrom(src => src.SaleEndDate));

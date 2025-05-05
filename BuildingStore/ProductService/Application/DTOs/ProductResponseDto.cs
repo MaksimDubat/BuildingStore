@@ -1,9 +1,9 @@
 ﻿namespace ProductService.Application.DTOs
 {
     /// <summary>
-    /// DTO для сущности продукт.
+    /// DTO ответа для сущности продукт.
     /// </summary>
-    public class ProductDto
+    public class ProductResponseDto
     {
         /// <summary>
         /// Наименование продукта.
@@ -28,11 +28,21 @@
         /// <summary>
         /// Изображение.
         /// </summary>
-        public IFormFile Image { get; set; }
+        public string Image { get; set; }
 
         /// <summary>
         /// Количество.
         /// </summary>
         public int Amount { get; set; }
+
+        /// <summary>
+        /// Цена со скидкой.
+        /// </summary>
+        public decimal? SalePrice { get; set; }
+
+        /// <summary>
+        /// Дата окончания скидки.
+        /// </summary>
+        public DateTime? SaleEndDate { get; set; }
     }
 }

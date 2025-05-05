@@ -6,6 +6,6 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Модель запроса на получение всех товаров без скидок.
     /// </summary>
-    public record GetProductsWithoutSaleQuery() : IRequest<IEnumerable<ProductDto>>;
+    public record GetProductsWithoutSaleQuery() : IRequest<IEnumerable<ProductResponseDto>>;
 
 }

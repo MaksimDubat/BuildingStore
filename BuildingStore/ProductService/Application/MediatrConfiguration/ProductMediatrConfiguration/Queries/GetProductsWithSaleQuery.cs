@@ -6,5 +6,5 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Модель запроса на получение продуктов со скидкой.
     /// </summary>
-    public record GetProductsWithSaleQuery() : IRequest<IEnumerable<ProductDto>>;
+    public record GetProductsWithSaleQuery() : IRequest<IEnumerable<ProductResponseDto>>;
 }

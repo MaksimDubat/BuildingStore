@@ -35,7 +35,9 @@ namespace ProductService
             app.UseHttpsRedirection();
 
             app.UseMiddleware<ExceptionHandlingMiddleware>();
-;
+
+            app.UseStaticFiles();
+
 
             app.UseAuthorization();
 

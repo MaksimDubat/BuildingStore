@@ -35,6 +35,7 @@ namespace ProductService.WebAPI.Registrations
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 
             services.AddScoped<PdfGenerationService>();
+            services.AddScoped<ImageService>();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

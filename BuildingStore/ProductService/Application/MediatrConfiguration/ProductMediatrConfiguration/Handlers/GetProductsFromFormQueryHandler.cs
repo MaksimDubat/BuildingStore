@@ -56,7 +56,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
                 .OrderBy(p => p.Price)
                 .ToList();
 
-            var productDto = _mapper.Map<IEnumerable<ProductDto>>(matchedProducts);
+            var productDto = _mapper.Map<IEnumerable<ProductResponseDto>>(matchedProducts);
 
             return new RecomendationsDto
             {
