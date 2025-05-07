@@ -10,7 +10,7 @@ namespace UserService.Domain.DataBase
     {
         public MutableDbConext(DbContextOptions<MutableDbConext> options) : base(options) { }
 
-        public DbSet<User> User { get; set; }
+        public DbSet<AppUser> User { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -2,7 +2,7 @@
 using UserService.Application.Mappings;
 using UserService.Domain.Entities;
 
-namespace UserService.Domain.Interfaces
+namespace UserService.Application.Interfaces
 {
     /// <summary>
     /// Интерфейс по работе с кешированием профиля.
@@ -32,5 +32,13 @@ namespace UserService.Domain.Interfaces
         /// <param name="cancellation"></param>
         /// <returns></returns>
         Task RemoveProfileAsync(int userId, CancellationToken cancellation);
+
+        /// <summary>
+        /// Проверка наличия кеша, при отсутвии добавление в кеш.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="ttl"></param>
+        /// <param name="cancellation"></param>
+        Task<UserDto> GetOrSetProfileAsync(int userId, TimeSpan ttl, CancellationToken cancellation);
     }
 }

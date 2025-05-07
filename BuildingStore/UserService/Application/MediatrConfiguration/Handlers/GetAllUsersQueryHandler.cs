@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
 using UserService.Application.DTOs;
+using UserService.Application.Interfaces;
 using UserService.Application.MediatrConfiguration.Queries;
-using UserService.Domain.Interfaces;
 
 namespace UserService.Application.MediatrConfiguration.Handlers
 {
@@ -22,14 +22,19 @@ namespace UserService.Application.MediatrConfiguration.Handlers
 
         public async Task<IEnumerable<UserDto>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
         {
-            var result = await _unitOfWork.Users.GetAllAsync(cancellationToken);
+            var users = await _unitOfWork.Users.GetAllAsync(
+                filter: x => true, 
+                pageNumber: request.PageNumber,
+                pageSize: request.PageSize,
+                cancellation: cancellationToken
+            );
 
-            if(result == null)
+            if (users == null)
             {
                 throw new ArgumentNullException("not found");
             }
 
-            return _mapper.Map<IEnumerable<UserDto>>(result);
+            return _mapper.Map<IEnumerable<UserDto>>(users);
         }
     }
 }

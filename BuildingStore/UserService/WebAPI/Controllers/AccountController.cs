@@ -1,21 +1,30 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using System.Threading;
+using UserService.Application.Common;
 using UserService.Application.DTOs;
+using UserService.Application.Interfaces;
 using UserService.Application.MediatrConfiguration.Commands;
 using UserService.Application.MediatrConfiguration.Queries;
 using UserService.Application.Models;
+using UserService.Infrastructure.RefreshTokenSet;
 
 namespace UserService.WebAPI.Controllers
 {
     [ApiController]
-    [Route("api/auth")]
+    [Route("api/v1/auth")]
     public class AccountController : ControllerBase
     {
         private readonly IMediator _mediator;
-        public AccountController(IMediator mediator)
+        private readonly IUserProfileCacheService _userProfileCacheService;
+     
+        public AccountController(IMediator mediator, IUserProfileCacheService userProfileCacheService)
         {
             _mediator = mediator;
+            _userProfileCacheService = userProfileCacheService;
         }
 
         /// <summary>
@@ -26,8 +35,13 @@ namespace UserService.WebAPI.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegistrationModel model, CancellationToken cancellation)
         {
-            await _mediator.Send(new RegisterCommand(model), cancellation);
-            return Ok("Registration done");
+            var command = await _mediator.Send(new RegisterCommand(model), cancellation);
+
+            var result = command.Data;
+
+            await _userProfileCacheService.SetProfileAsync(result.Id, result, TimeSpan.FromHours(3), cancellation);
+
+            return Ok(new { command.Message });
         }
 
         /// <summary>
@@ -39,8 +53,13 @@ namespace UserService.WebAPI.Controllers
         [HttpPost("registermanager")]
         public async Task<IActionResult> RegisterManager([FromBody] RegistrationModel model, CancellationToken cancellation)
         {
-            await _mediator.Send(new RegisterManagersCommand(model), cancellation);
-            return Ok("Registration done");
+            var command = await _mediator.Send(new RegisterManagersCommand(model), cancellation);
+
+            var result = command.Data;
+
+            await _userProfileCacheService.SetProfileAsync(result.Id, result, TimeSpan.FromHours(3), cancellation);
+
+            return Ok(new { command.Message });
         }
 
         /// <summary>
@@ -51,8 +70,22 @@ namespace UserService.WebAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model, CancellationToken cancellation)
         {
-            await _mediator.Send(new LoginCommand(model), cancellation);
-            return Ok("Done");
+            var command = await _mediator.Send(new LoginCommand(model), cancellation);
+
+            var loginResult = command.Data;
+
+            await _userProfileCacheService.GetOrSetProfileAsync(loginResult.User.Id, TimeSpan.FromHours(3), cancellation);
+
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true
+            };
+
+            Response.Cookies.Append("cookies", loginResult.AccessToken, cookieOptions);
+            Response.Cookies.Append("fresh-cookies", loginResult.RefreshToken.Refresh, cookieOptions);
+            Response.Cookies.Append("fresh-time-cookies", loginResult.RefreshToken.Expires.ToString("O"), cookieOptions);
+
+            return Ok(new { command.Message });
         }
 
         /// <summary>
@@ -63,58 +96,17 @@ namespace UserService.WebAPI.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout(CancellationToken cancellation)
         {
-            await _mediator.Send(new LogoutCommand(), cancellation);
-            return Ok("bye");
-        }
+            var command = await _mediator.Send(new LogoutCommand(User), cancellation);
 
-        /// <summary>
-        /// Получение всех пользователей.
-        /// </summary>
-        /// <param name="cancellation"></param>
-        [Authorize(Policy = "AdminManagerPolicy")]
-        [HttpGet("users")]
-        public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsers(CancellationToken cancellation)
-        {
-            var result = await _mediator.Send(new GetAllUsersQuery(), cancellation);
-            return Ok(result);
-        }
+            var userId = command.Data;
 
-        /// <summary>
-        /// Получение менеджеров.
-        /// </summary>
-        /// <param name="cancellation"></param>
-        [Authorize(Policy = "AdminPolicy")]
-        [HttpGet("managers")]
-        public async Task<ActionResult<IEnumerable<UserDto>>> GetManagers(CancellationToken cancellation)
-        {
-            var result = await _mediator.Send(new GetManagersQuery(), cancellation);
-            return Ok(result);
-        }
+            await _userProfileCacheService.RemoveProfileAsync(userId, cancellation);
 
-        /// <summary>
-        /// Получение пользователя по идентифкатору.
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="cancellation"></param>
-        [Authorize(Policy = "AdminManagerPolicy")]
-        [HttpGet("user")]
-        public async Task<ActionResult<UserDto>> GetUserById(int userId, CancellationToken cancellation)
-        {
-            var result = await _mediator.Send(new GetUserByIdQuery(userId), cancellation);
-            return Ok(result);
-        }
+            Response.Cookies.Delete("cookies");
+            Response.Cookies.Delete("fresh-cookies");
+            Response.Cookies.Delete("fresh-time-cookies");
 
-        /// <summary>
-        /// Удаление пользователя по идентифкатору.
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="cancellation"></param>
-        [Authorize(Policy = "AdminPolicy")]
-        [HttpDelete("deleteuser")]
-        public async Task<ActionResult> DeleteUser(int userId, CancellationToken cancellation)
-        {
-            await _mediator.Send(new DeleteUserCommand(userId), cancellation);
-            return Ok("Deleted");
+            return Ok(new { command.Message });
         }
 
         /// <summary>
@@ -125,8 +117,23 @@ namespace UserService.WebAPI.Controllers
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshTokens(CancellationToken cancellationToken)
         {
-            await _mediator.Send(new RefreshTokenCommand(), cancellationToken);
-            return Ok("Session refreshed");
+            var refresh = Request.Cookies["fresh-cookies"];
+            var expiresAtString = Request.Cookies["fresh-time-cookies"];
+
+            var command = await _mediator.Send(new RefreshTokenCommand(refresh, expiresAtString, User), cancellationToken);
+
+            var refreshTokens = command.Data;
+
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true
+            };
+
+            Response.Cookies.Append("cookies", refreshTokens.AccessToken, cookieOptions);
+            Response.Cookies.Append("fresh-cookies", refreshTokens.RefreshToken.Refresh, cookieOptions);
+            Response.Cookies.Append("fresh-time-cookies", refreshTokens.RefreshToken.Expires.ToString("O"), cookieOptions);
+
+            return Ok(new { command.Message });
         }
     }
 }

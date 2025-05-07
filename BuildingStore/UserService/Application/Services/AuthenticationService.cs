@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Threading;
+using UserService.Application.Interfaces;
 using UserService.Domain.DataBase;
 using UserService.Domain.Entities;
 using UserService.Domain.Enums;
-using UserService.Domain.Interfaces;
-using UserService.Infrastructure.JwtSet;
 
 namespace UserService.Application.Services
 {
@@ -15,24 +14,22 @@ namespace UserService.Application.Services
     {
         private readonly IPasswordHasherService _passwordHasher;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly MutableDbConext _context;
         private readonly IJwtGenerator _jwtGenerator;
 
         public AuthenticationService(IPasswordHasherService passwordHasher, IUnitOfWork unitOfWork,
-            MutableDbConext context, IJwtGenerator jwtGenerator)
+         IJwtGenerator jwtGenerator)
         {
             _passwordHasher = passwordHasher;
             _unitOfWork = unitOfWork;
-            _context = context;
             _jwtGenerator = jwtGenerator;   
         }
 
         /// <inheritdoc/>
-        public async Task<User> RegisterAsync(string name, string email, string password, CancellationToken cancellation)
+        public async Task<AppUser> RegisterAsync(string name, string email, string password, CancellationToken cancellation)
         {
             var hashedPassword = _passwordHasher.GeneratePasswordHash(password);
 
-            var user = new User()
+            var user = new AppUser()
             {
                 UserName = name,
                 UserEmail = email,

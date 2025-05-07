@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace UserService.Domain.Middleware
+namespace UserService.WebAPI.Middleware
 {
     /// <summary>
     /// Обработчик входящих запросов.

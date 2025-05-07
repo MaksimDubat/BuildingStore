@@ -2,7 +2,7 @@
 
 namespace UserService.Domain.Entities
 {
-    public class User
+    public class AppUser
     {
         /// <summary>
         /// Идентификатор пользователя.

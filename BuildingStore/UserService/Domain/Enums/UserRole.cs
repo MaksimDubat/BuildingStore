@@ -16,13 +16,8 @@
         User = 2,
 
         /// <summary>
-        /// Гость.
-        /// </summary>
-        Guest = 3,
-
-        /// <summary>
         /// Менеджер.
         /// </summary>
-        Manager = 4,
+        Manager = 3,
     }
 }

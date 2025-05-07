@@ -1,5 +1,5 @@
 ﻿using BCrypt.Net;
-using UserService.Domain.Interfaces;
+using UserService.Application.Interfaces;
 
 namespace UserService.Application.Services
 {

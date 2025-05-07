@@ -1,5 +1,5 @@
-﻿using UserService.Domain.DataBase;
-using UserService.Domain.Interfaces;
+﻿using UserService.Application.Interfaces;
+using UserService.Domain.DataBase;
 using UserService.Infrastructure.Repositories;
 
 namespace UserService.Infrastructure.UnitOfWork

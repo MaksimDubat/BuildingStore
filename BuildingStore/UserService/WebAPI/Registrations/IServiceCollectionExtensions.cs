@@ -4,12 +4,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using UserService.Application.Interfaces;
 using UserService.Application.MediatrConfiguration.Commands;
 using UserService.Application.Services;
 using UserService.Application.Validators.Behavior;
 using UserService.Application.Validators.UserValidation;
 using UserService.Domain.DataBase;
-using UserService.Domain.Interfaces;
 using UserService.Infrastructure.JwtSet;
 using UserService.Infrastructure.RedisCache;
 using UserService.Infrastructure.RefreshTokenSet;
@@ -21,23 +21,32 @@ namespace UserService.WebAPI.Registrations
     /// <summary>
     /// Класс регистрации компонентов.
     /// </summary>
-    public class UserServiceRegistrations
+    public static class IServiceCollectionExtensions
     {
-        public static void RegisterRepositories(IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection");
+
             services.AddDbContext<MutableDbConext>(options =>
                 options.UseNpgsql(connectionString)
             );
 
+            return services;
+        }
+
+        public static IServiceCollection AddRedisCache(this IServiceCollection services)
+        {
             services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = "127.0.0.1:6379";
                 options.InstanceName = "UserService_";
             });
 
-            services.AddHttpContextAccessor();
+            return services;
+        }
 
+        public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
+        {
             var jwtOptions = configuration.GetSection("JwtOptions").Get<JwtOptions>();
             services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
 
@@ -62,6 +71,11 @@ namespace UserService.WebAPI.Registrations
 
                 });
 
+            return services;
+        }
+
+        public static IServiceCollection AddAuthorizationPolicies(this IServiceCollection services)
+        {
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("AdminPolicy", policy =>
@@ -73,35 +87,72 @@ namespace UserService.WebAPI.Registrations
                 options.AddPolicy("ManagerPolicy", policy =>
                     policy.RequireRole("Manager"));
 
-                options.AddPolicy("GuestPolicy", policy =>
-                    policy.RequireRole("Guest"));
-
-                options.AddPolicy("UserOrGuestPolicy", policy =>
-                    policy.RequireRole("User", "Guest"));
-
                 options.AddPolicy("ManagerAdminUserPolicy", policy =>
                     policy.RequireRole("User", "Admin", "Manager"));
             });
 
-            services.AddScoped<IUserProfileCacheService, UserProfileCacheService>();
+            return services;
+        }
+
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+        {
             services.AddScoped<IJwtGenerator, JwtGenerator>();
             services.AddScoped<IRefreshTokenGenerator, RefreshTokenGenerator>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
-            services.AddScoped<IUserRepository, UserRepository>();
-
+            services.AddScoped<IUserProfileCacheService, UserProfileCacheService>();
             services.AddScoped<IPasswordHasherService, PasswordHasherService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
 
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            return services;
+        }
 
+        public static IServiceCollection AddRepositories(this IServiceCollection services)
+        {
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+
+            return services;
+        }
+
+        public static IServiceCollection AddValidation(this IServiceCollection services)
+        {
             services.AddTransient<IValidator<RegisterCommand>, RegistrationValidator>();
             services.AddTransient<IValidator<RegisterManagersCommand>, RegistrationManagerValidator>();
             services.AddTransient<IValidator<LoginCommand>, LoginValidator>();
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
-            services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(UserServiceRegistrations).Assembly));
+            return services;
+        }
+
+        public static IServiceCollection AddMediatrExtension(this IServiceCollection services)
+        {
+            services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(IServiceCollectionExtensions).Assembly));
+
+            return services;
+        }
+
+        public static IServiceCollection AddAutoMapperExtension(this IServiceCollection services)
+        {
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            return services;
+        }
+
+        public static IServiceCollection AddExtensionsServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddHttpContextAccessor();
+
+            return services
+                .AddDatabase(configuration)
+                .AddRedisCache()
+                .AddJwtAuthentication(configuration)
+                .AddAuthorizationPolicies()
+                .AddApplicationServices()
+                .AddRepositories()
+                .AddValidation()
+                .AddMediatrExtension()
+                .AddAutoMapperExtension();
+
         }
 
     }

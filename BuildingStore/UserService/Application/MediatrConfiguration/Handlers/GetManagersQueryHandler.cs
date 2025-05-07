@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using MediatR;
 using UserService.Application.DTOs;
+using UserService.Application.Interfaces;
 using UserService.Application.MediatrConfiguration.Queries;
 using UserService.Domain.Enums;
-using UserService.Domain.Interfaces;
 
 namespace UserService.Application.MediatrConfiguration.Handlers
 {

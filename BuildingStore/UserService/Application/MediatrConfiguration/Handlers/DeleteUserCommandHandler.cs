@@ -1,13 +1,14 @@
 ﻿using MediatR;
+using UserService.Application.Common;
+using UserService.Application.Interfaces;
 using UserService.Application.MediatrConfiguration.Commands;
-using UserService.Domain.Interfaces;
 
 namespace UserService.Application.MediatrConfiguration.Handlers
 {
     /// <summary>
     /// Обработчик команды для удаления пользователя по идентифкатору.
     /// </summary>
-    public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand>
+    public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, Result>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -16,17 +17,19 @@ namespace UserService.Application.MediatrConfiguration.Handlers
             _unitOfWork = unitOfWork;
         }
 
-        public async Task Handle(DeleteUserCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.Users.GetAsync(request.UserId, cancellationToken);
 
             if (user == null)
             {
-                throw new KeyNotFoundException("not found");
+                return Result.Failure("not found");
             }
 
             await _unitOfWork.Users.DeleteAsync(user.Id, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
+
+            return Result.Success("Deleted");
         }
     }
 }

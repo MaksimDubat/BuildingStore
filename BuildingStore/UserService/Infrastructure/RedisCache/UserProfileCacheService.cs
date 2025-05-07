@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
+﻿using AutoMapper;
+using Microsoft.Extensions.Caching.Distributed;
 using System.Text.Json;
 using UserService.Application.DTOs;
+using UserService.Application.Interfaces;
 using UserService.Domain.Entities;
-using UserService.Domain.Interfaces;
 
 namespace UserService.Infrastructure.RedisCache
 {
@@ -13,16 +14,19 @@ namespace UserService.Infrastructure.RedisCache
     {
         private readonly IDistributedCache _cache;
         private const string prefix = "user_profile_";
-
-        public UserProfileCacheService(IDistributedCache cache)
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+        public UserProfileCacheService(IDistributedCache cache, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _cache = cache;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         /// <inheritdoc/>
         public async Task<UserDto> GetProfileAsync(int userId, CancellationToken cancellation)
         {
-            var key = $"Userservice_{prefix}{userId}";
+            var key = $"{prefix}{userId}";
             var json = await _cache.GetStringAsync(key, cancellation);
 
             try
@@ -54,6 +58,29 @@ namespace UserService.Infrastructure.RedisCache
             };
 
             await _cache.SetStringAsync(key, json, options, cancellation);
+        }
+
+        /// <inheritdoc/>
+        public async Task<UserDto> GetOrSetProfileAsync(int userId, TimeSpan ttl, CancellationToken cancellation)
+        {
+            var cached = await GetProfileAsync(userId, cancellation);
+
+            if (cached != null)
+            {
+                return cached;
+            }
+
+            var user = await _unitOfWork.Users.GetAsync(userId, cancellation);
+
+            if(user == null)
+            {
+                throw new KeyNotFoundException("Not found");
+            }
+
+            var profile = _mapper.Map<UserDto>(user);
+            await SetProfileAsync(userId, profile, ttl, cancellation);
+
+            return profile;
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using UserService.Domain.Entities;
 
-namespace UserService.Domain.Interfaces
+namespace UserService.Application.Interfaces
 {
     /// <summary>
     /// Интерфейс сервиса аунтефикации.
@@ -22,6 +22,6 @@ namespace UserService.Domain.Interfaces
         /// <param name="email">Email пользователя.</param>
         /// <param name="password">Пароль.</param>
         /// <param name="cancellation">Токен отмены операции.</param>
-        Task<User> RegisterAsync(string name, string email, string password, CancellationToken cancellation);
+        Task<AppUser> RegisterAsync(string name, string email, string password, CancellationToken cancellation);
     }
 }

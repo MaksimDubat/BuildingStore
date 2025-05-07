@@ -11,13 +11,13 @@ namespace UserService.Application.Mappings
     {
         public UserProfile()
         {
-            CreateMap<User, UserDto>()
+            CreateMap<AppUser, UserDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
                 .ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.UserEmail))
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role));
 
-            CreateMap<UserDto, User>()
+            CreateMap<UserDto, AppUser>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
                 .ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.UserEmail))

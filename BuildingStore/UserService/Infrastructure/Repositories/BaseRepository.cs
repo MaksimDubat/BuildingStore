@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using UserService.Application.Interfaces;
 using UserService.Domain.DataBase;
-using UserService.Domain.Interfaces;
+using UserService.Domain.Entities;
 
 namespace UserService.Infrastructure.Repositories
 {
@@ -18,7 +19,7 @@ namespace UserService.Infrastructure.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task AddAsync(T entity, CancellationToken cancellation)
+        public async Task AddEntityAsync(T entity, CancellationToken cancellation)
         {
             await _context.AddAsync(entity, cancellation);
         }
@@ -41,13 +42,13 @@ namespace UserService.Infrastructure.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<List<T>> GetAllAsync(CancellationToken cancellation)
+        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter, int pageNumber, int pageSize, CancellationToken cancellation)
         {
-            var result = await _context.Set<T>()
-                .AsNoTracking()
-                .ToListAsync(cancellation);
-
-            return result;
+            IQueryable<T> query = _context.Set<T>();
+            query = query.Where(filter);
+            query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+            
+            return await query.ToListAsync(cancellation);
         }
 
         /// <inheritdoc/>

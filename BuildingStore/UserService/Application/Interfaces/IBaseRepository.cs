@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace UserService.Domain.Interfaces
+namespace UserService.Application.Interfaces
 {
     /// <summary>
     /// Интерфейс общего репозитория по работе с CRUD-операциями.
@@ -9,10 +9,16 @@ namespace UserService.Domain.Interfaces
     public interface IBaseRepository<T> where T : class
     {
         /// <summary>
-        /// Получение всех сущностей.
+        /// Получение всех сущностей с пагинацией.
         /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="pageNumber"></param>
+        /// <param name="pageSize"></param>
         /// <param name="cancellation"></param>
-        Task<List<T>> GetAllAsync(CancellationToken cancellation);
+        Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter,
+            int pageNumber,
+            int pageSize,
+            CancellationToken cancellation);
 
         /// <summary>
         /// Получение сущности по идентификатору.
@@ -26,7 +32,7 @@ namespace UserService.Domain.Interfaces
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="cancellation"></param>
-        Task AddAsync(T entity, CancellationToken cancellation);
+        Task AddEntityAsync(T entity, CancellationToken cancellation);
 
         /// <summary>
         /// Обновление сущности.

@@ -22,6 +22,10 @@ namespace UserService.Application.Validators.UserValidation
             RuleFor(x => x.Model.ConfirmPassword)
                 .NotEmpty()
                 .MinimumLength(4).WithMessage("no smaller than 4");
+
+            RuleFor(x => x.Model)
+                .Must(model => model.Password == model.ConfirmPassword)
+                .WithMessage("Passwords should be the same");
         }
     }
 }

@@ -1,15 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using UserService.Application.Interfaces;
 using UserService.Domain.DataBase;
 using UserService.Domain.Entities;
 using UserService.Domain.Enums;
-using UserService.Domain.Interfaces;
 
 namespace UserService.Infrastructure.Repositories
 {
     /// <summary>
     /// Репозиторий по работе с пользователями.
     /// </summary>
-    public class UserRepository : BaseRepository<User>, IUserRepository
+    public class UserRepository : BaseRepository<AppUser>, IUserRepository
     {
         private readonly MutableDbConext _context;
 
@@ -19,7 +19,7 @@ namespace UserService.Infrastructure.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<User> GetByEmailAsync(string email, CancellationToken cancellation)
+        public async Task<AppUser> GetByEmailAsync(string email, CancellationToken cancellation)
         {
             return await _context.User
                  .AsNoTracking()
@@ -27,7 +27,7 @@ namespace UserService.Infrastructure.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<User>> GetManagersAsync(CancellationToken cancellation)
+        public async Task<IEnumerable<AppUser>> GetManagersAsync(CancellationToken cancellation)
         {
             return await _context.User
                 .Where(x => x.Role == UserRole.Manager)
@@ -35,7 +35,7 @@ namespace UserService.Infrastructure.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<bool> IsUserExistOrDuplicateAsync(User user, CancellationToken cancellation)
+        public async Task<bool> IsUserExistOrDuplicateAsync(AppUser user, CancellationToken cancellation)
         {
             return await _context.User.AnyAsync(
             x => x.Id != user.Id &&

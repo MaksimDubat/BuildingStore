@@ -1,4 +1,4 @@
-﻿namespace UserService.Domain.Interfaces
+﻿namespace UserService.Application.Interfaces
 {
     /// <summary>
     /// Интерфейс по работе с хешированными паролями.

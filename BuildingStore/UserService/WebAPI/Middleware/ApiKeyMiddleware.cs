@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace UserService.Domain.Middleware
+namespace UserService.WebAPI.Middleware
 {
     /// <summary>
     /// Класс проверки API-ключа.

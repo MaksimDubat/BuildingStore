@@ -5,9 +5,9 @@ using UserService.Domain.Enums;
 
 namespace UserService.Infrastructure.Configurations
 {
-    public class UserConfiguration : IEntityTypeConfiguration<User>
+    public class UserConfiguration : IEntityTypeConfiguration<AppUser>
     {
-        public void Configure(EntityTypeBuilder<User> builder)
+        public void Configure(EntityTypeBuilder<AppUser> builder)
         {
             builder.HasKey(x => x.Id);
             builder.Property(x => x.UserName)

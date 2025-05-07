@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using UserService.Application.Interfaces;
 using UserService.Domain.Entities;
 
 namespace UserService.Infrastructure.JwtSet
@@ -20,7 +21,7 @@ namespace UserService.Infrastructure.JwtSet
         }
 
         /// <inheritdoc/>
-        public string GenerateToken(User user)
+        public string GenerateToken(AppUser user)
         {
             var claims = new List<Claim>
             {

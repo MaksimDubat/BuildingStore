@@ -1,5 +1,4 @@
-
-using UserService.Domain.Middleware;
+using UserService.WebAPI.Middleware;
 using UserService.WebAPI.Registrations;
 
 namespace UserService
@@ -11,8 +10,7 @@ namespace UserService
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
-            UserServiceRegistrations.RegisterRepositories(builder.Services, builder.Configuration);
+            builder.Services.AddExtensionsServices(builder.Configuration);
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

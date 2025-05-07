@@ -1,39 +1,25 @@
 ﻿using MediatR;
 using System.Security.Claims;
+using UserService.Application.Common;
 using UserService.Application.MediatrConfiguration.Commands;
-using UserService.Domain.Interfaces;
 
 namespace UserService.Application.MediatrConfiguration.Handlers
 {
     /// <summary>
     /// Обработчик запроса выхода пользователя.
     /// </summary>
-    public class LogoutCommandHandler : IRequestHandler<LogoutCommand>
+    public class LogoutCommandHandler : IRequestHandler<LogoutCommand, Result<int>>
     {
-        private readonly IAuthenticationService _authenticationService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IUserProfileCacheService _profileCacheService;
-        public LogoutCommandHandler(IAuthenticationService authenticationService, IHttpContextAccessor httpContextAccessor,
-            IUserProfileCacheService profileCacheService)
+        public async Task<Result<int>> Handle(LogoutCommand request, CancellationToken cancellationToken)
         {
-            _authenticationService = authenticationService;
-            _httpContextAccessor = httpContextAccessor;
-            _profileCacheService = profileCacheService;
-        }
+            var userIdClaim = request.User.FindFirst(ClaimTypes.NameIdentifier);
 
-        public async Task Handle(LogoutCommand request, CancellationToken cancellationToken)
-        {
-            var userId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier);
-
-            if (userId != null && int.TryParse(userId.Value, out var result))
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
             {
-                await _profileCacheService.RemoveProfileAsync(result, cancellationToken);
+                return Result<int>.Failure("Invalid user ID.");
             }
-        
-            _httpContextAccessor.HttpContext?.Response.Cookies.Delete("cookies");
-            _httpContextAccessor.HttpContext?.Response.Cookies.Delete("fresh-cookies");
-            _httpContextAccessor.HttpContext?.Response.Cookies.Delete("fresh-time-cookies");
 
+            return Result<int>.Success(userId, "Bye");
         }
     }
 }

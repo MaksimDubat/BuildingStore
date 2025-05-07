@@ -1,6 +1,6 @@
 ﻿using UserService.Domain.Entities;
 
-namespace UserService.Infrastructure.JwtSet
+namespace UserService.Application.Interfaces
 {
     /// <summary>
     /// Интерфейс сервиса генерации токенов.
@@ -11,7 +11,6 @@ namespace UserService.Infrastructure.JwtSet
         /// Метод создания токена.
         /// </summary>
         /// <param name="user"></param>
-        /// <param name="roles"></param>
-        string GenerateToken(User user);
+        string GenerateToken(AppUser user);
     }
 }
