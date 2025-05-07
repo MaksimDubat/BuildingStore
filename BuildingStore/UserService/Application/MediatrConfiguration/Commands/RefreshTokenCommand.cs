@@ -8,6 +8,18 @@ namespace UserService.Application.MediatrConfiguration.Commands
     /// <summary>
     /// Модель команды для обновления токенов.
     /// </summary>
-    public record RefreshTokenCommand(string Refresh, string ExpiresAtString, ClaimsPrincipal User) : IRequest<Result<RefreshTokensResult>>;
+    public class RefreshTokenCommand : IRequest<Result<RefreshTokensResult>>
+    {
+        public string Refresh { get; set; }
+        public string ExpiresAtString { get; set; }
+        public ClaimsPrincipal User { get; set; }
+
+        public RefreshTokenCommand(string refresh, string expiresAtString, ClaimsPrincipal user)
+        {
+            Refresh = refresh;
+            ExpiresAtString = expiresAtString;
+            User = user;
+        }
+    }
 
 }
