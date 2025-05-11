@@ -22,12 +22,8 @@ namespace UserService.Application.MediatrConfiguration.Handlers
 
         public async Task<IEnumerable<UserDto>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
         {
-            var users = await _unitOfWork.Users.GetAllAsync(
-                filter: x => true, 
-                pageNumber: request.PageNumber,
-                pageSize: request.PageSize,
-                cancellation: cancellationToken
-            );
+            var users = await _unitOfWork.Users.GetAllAsync((x => true, request.PageNumber, request.PageSize), 
+                cancellationToken);
 
             if (users == null)
             {

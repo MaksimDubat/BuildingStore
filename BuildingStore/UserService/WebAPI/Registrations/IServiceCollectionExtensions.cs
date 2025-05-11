@@ -138,22 +138,5 @@ namespace UserService.WebAPI.Registrations
             return services;
         }
 
-        public static IServiceCollection AddExtensionsServices(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddHttpContextAccessor();
-
-            return services
-                .AddDatabase(configuration)
-                .AddRedisCache()
-                .AddJwtAuthentication(configuration)
-                .AddAuthorizationPolicies()
-                .AddApplicationServices()
-                .AddRepositories()
-                .AddValidation()
-                .AddMediatrExtension()
-                .AddAutoMapperExtension();
-
-        }
-
     }
 }

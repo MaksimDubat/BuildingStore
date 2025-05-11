@@ -11,13 +11,10 @@ namespace UserService.Application.Interfaces
         /// <summary>
         /// Получение всех сущностей с пагинацией.
         /// </summary>
-        /// <param name="filter"></param>
-        /// <param name="pageNumber"></param>
-        /// <param name="pageSize"></param>
+        /// <param name="options"></param>
         /// <param name="cancellation"></param>
-        Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter,
-            int pageNumber,
-            int pageSize,
+        /// <returns></returns>
+        Task<List<T>> GetAllAsync((Expression<Func<T, bool>> filter, int page, int size) options, 
             CancellationToken cancellation);
 
         /// <summary>
@@ -54,5 +51,6 @@ namespace UserService.Application.Interfaces
         /// <param name="predicate"></param>
         /// <param name="cancellation"></param>
         Task<bool> AnyAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellation);
+
     }
 }
