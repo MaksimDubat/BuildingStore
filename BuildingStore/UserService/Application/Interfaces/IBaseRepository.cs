@@ -14,8 +14,7 @@ namespace UserService.Application.Interfaces
         /// <param name="options"></param>
         /// <param name="cancellation"></param>
         /// <returns></returns>
-        Task<List<T>> GetAllAsync((Expression<Func<T, bool>> filter, int page, int size) options, 
-            CancellationToken cancellation);
+        Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter, CancellationToken cancellation);
 
         /// <summary>
         /// Получение сущности по идентификатору.

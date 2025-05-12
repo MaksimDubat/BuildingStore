@@ -42,17 +42,13 @@ namespace UserService.Infrastructure.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<List<T>> GetAllAsync((Expression<Func<T, bool>> filter, int page, int size) options, 
-            CancellationToken cancellation)
+        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter, CancellationToken cancellation)
         {
-            var (filter , page, size) = options;
+            var query = _context.Set<T>().AsQueryable();
 
-            var query = _context.Set<T>()
-                .Where(filter)
-                .Skip((page - 1) * size)
-                .Take(size);
+            var filteredQuery = query.Where(filter);
 
-            return await query.ToListAsync(cancellation);
+            return await filteredQuery.ToListAsync(cancellation);
         }
 
         /// <inheritdoc/>
