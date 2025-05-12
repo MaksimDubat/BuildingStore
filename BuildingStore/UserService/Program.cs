@@ -12,25 +12,15 @@ namespace UserService
 
             // Add services to the container.
             builder.Services.AddHttpContextAccessor();
-
             builder.Services.AddDatabase(builder.Configuration);
-
             builder.Services.AddRedisCache();
-
             builder.Services.AddJwtAuthentication(builder.Configuration);
-
             builder.Services.AddAuthorizationPolicies();
-
             builder.Services.AddApplicationServices();
-
             builder.Services.AddRepositories();
-
             builder.Services.AddValidation();
-
             builder.Services.AddMediatrExtension();
-
             builder.Services.AddAutoMapperExtension();
-
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
