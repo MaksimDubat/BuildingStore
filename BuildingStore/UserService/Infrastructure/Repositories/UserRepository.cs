@@ -27,14 +27,6 @@ namespace UserService.Infrastructure.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<AppUser>> GetManagersAsync(CancellationToken cancellation)
-        {
-            return await _context.User
-                .Where(x => x.Role == UserRole.Manager)
-                .ToListAsync(cancellation);
-        }
-
-        /// <inheritdoc/>
         public async Task<bool> IsUserExistOrDuplicateAsync(AppUser user, CancellationToken cancellation)
         {
             return await _context.User.AnyAsync(

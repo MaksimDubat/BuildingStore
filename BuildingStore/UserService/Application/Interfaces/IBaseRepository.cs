@@ -9,12 +9,11 @@ namespace UserService.Application.Interfaces
     public interface IBaseRepository<T> where T : class
     {
         /// <summary>
-        /// Получение всех сущностей с пагинацией.
+        /// Получение всех сущностей с пагинацией
         /// </summary>
-        /// <param name="options"></param>
+        /// <param name="queryBuilder"></param>
         /// <param name="cancellation"></param>
-        /// <returns></returns>
-        Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter, CancellationToken cancellation);
+        Task<List<T>> GetAllAsync(Func<IQueryable<T>, IQueryable<T>> queryBuilder, CancellationToken cancellation);
 
         /// <summary>
         /// Получение сущности по идентификатору.

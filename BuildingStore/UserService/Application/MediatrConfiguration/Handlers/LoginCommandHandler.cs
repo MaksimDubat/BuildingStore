@@ -31,14 +31,14 @@ namespace UserService.Application.MediatrConfiguration.Handlers
         {
             var token = await _authenticationService.SignInAsync(request.Model.Email, request.Model.Password, cancellationToken);
 
-            if(token == null)
+            if(token is null)
             {
                 return Result<LoginResult>.Failure("operation invalid");
             }
            
             var user = await _unitOfWork.Users.GetByEmailAsync(request.Model.Email, cancellationToken);
 
-            if(user == null)
+            if(user is null)
             {
                 return Result<LoginResult>.Failure("User not found");
             }

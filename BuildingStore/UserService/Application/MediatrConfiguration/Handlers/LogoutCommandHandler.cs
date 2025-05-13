@@ -14,7 +14,7 @@ namespace UserService.Application.MediatrConfiguration.Handlers
         {
             var userIdClaim = request.User.FindFirst(ClaimTypes.NameIdentifier);
 
-            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+            if (userIdClaim is null || !int.TryParse(userIdClaim.Value, out var userId))
             {
                 return Result<int>.Failure("Invalid user ID.");
             }

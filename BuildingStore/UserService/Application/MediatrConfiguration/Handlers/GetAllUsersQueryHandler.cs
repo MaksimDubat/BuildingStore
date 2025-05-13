@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using UserService.Application.Common;
 using UserService.Application.DTOs;
 using UserService.Application.Extensions;
 using UserService.Application.Interfaces;
@@ -10,7 +11,7 @@ namespace UserService.Application.MediatrConfiguration.Handlers
     /// <summary>
     /// Обработчик запроса на получение всех пользователей.
     /// </summary>
-    public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, IEnumerable<UserDto>>
+    public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, Result<IEnumerable<UserDto>>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -21,18 +22,15 @@ namespace UserService.Application.MediatrConfiguration.Handlers
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<UserDto>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<UserDto>>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
         {
-            var users = await _unitOfWork.Users.GetAllAsync(x => true, cancellationToken);
+            var users = await _unitOfWork.Users.GetAllAsync(q => q.ApplyPagination(request.PageNumber, request.PageSize),
+                cancellationToken);
 
-            if (users == null)
-            {
-                throw new ArgumentNullException("not found");
-            }
+            var result = _mapper.Map<IEnumerable<UserDto>>(users);
 
-            var result = users.AsQueryable().ApplyPagination(request.PageNumber, request.PageSize);
-
-            return _mapper.Map<IEnumerable<UserDto>>(result);
+            return Result<IEnumerable<UserDto>>.Success(result, "Users");
         }
     }
 }
+

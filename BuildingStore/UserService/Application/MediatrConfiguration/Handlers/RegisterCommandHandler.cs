@@ -34,7 +34,7 @@ namespace UserService.Application.MediatrConfiguration.Handlers
                request.Model.Password,
                cancellationToken);
 
-            if (user == null)
+            if (user is null)
             {
                 return Result<UserDto>.Failure("Wrong registration");
             }

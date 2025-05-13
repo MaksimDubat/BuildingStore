@@ -27,12 +27,12 @@ namespace UserService.Application.MediatrConfiguration.Handlers
 
         public async Task<Result<RefreshTokensResult>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {
-            if (request.Refresh == null)
+            if (request.Refresh is null)
             {
                 return Result<RefreshTokensResult>.Failure("refreshtoken not found");
             }
 
-            if (request.ExpiresAtString == null)
+            if (request.ExpiresAtString is null)
             {
                 return Result<RefreshTokensResult>.Failure("refreshtoken not found");
             }
@@ -54,14 +54,14 @@ namespace UserService.Application.MediatrConfiguration.Handlers
 
             var userFromCoockie = request.User;
 
-            if (userFromCoockie == null)
+            if (userFromCoockie is null)
             {
                 return Result<RefreshTokensResult>.Failure("user not found");
             }
 
             var userIdClaim = userFromCoockie.FindFirst(ClaimTypes.NameIdentifier);
 
-            if (userIdClaim == null)
+            if (userIdClaim is null)
             {
                 return Result<RefreshTokensResult>.Failure("user not found");
             }
@@ -75,21 +75,21 @@ namespace UserService.Application.MediatrConfiguration.Handlers
 
             var user = await _unitOfWork.Users.GetAsync(userId, cancellationToken);
 
-            if (user == null)
+            if (user is null)
             {
                 return Result<RefreshTokensResult>.Failure("user not found");
             }
 
             var newAccessToken = _jwtGenerator.GenerateToken(user);
 
-            if(newAccessToken == null)
+            if(newAccessToken is null)
             {
                 return Result <RefreshTokensResult>.Failure("wrong generation");
             }
 
             var newRefreshToken = _refreshTokenGenerator.GenerateRefreshToken();
 
-            if (newRefreshToken == null)
+            if (newRefreshToken is null)
             {
                 return Result<RefreshTokensResult>.Failure("wrong generation");
             }

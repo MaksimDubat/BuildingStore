@@ -21,7 +21,7 @@ namespace UserService.Application.MediatrConfiguration.Handlers
         {
             var user = await _unitOfWork.Users.GetAsync(request.UserId, cancellationToken);
 
-            if (user == null)
+            if (user is null)
             {
                 return Result.Failure("not found");
             }

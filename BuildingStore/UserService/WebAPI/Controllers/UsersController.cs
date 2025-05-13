@@ -28,7 +28,7 @@ namespace UserService.WebAPI.Controllers
         public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsers([FromQuery] int page, [FromQuery] int size, CancellationToken cancellation)
         {
             var result = await _mediator.Send(new GetAllUsersQuery(page, size), cancellation);
-            return Ok(result);
+            return Ok(new { result.Data });
         }
 
         /// <summary>
@@ -37,10 +37,10 @@ namespace UserService.WebAPI.Controllers
         /// <param name="cancellation"></param>
         [Authorize(Policy = "AdminPolicy")]
         [HttpGet("managers")]
-        public async Task<ActionResult<IEnumerable<UserDto>>> GetManagers(CancellationToken cancellation)
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetManagers([FromQuery] int page, [FromQuery] int size, CancellationToken cancellation)
         {
-            var result = await _mediator.Send(new GetManagersQuery(), cancellation);
-            return Ok(result);
+            var result = await _mediator.Send(new GetManagersQuery(page, size), cancellation);
+            return Ok(new { result.Data });
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace UserService.WebAPI.Controllers
         public async Task<ActionResult<UserDto>> GetUserById(int userId, CancellationToken cancellation)
         {
             var result = await _mediator.Send(new GetUserByIdQuery(userId), cancellation);
-            return Ok(result);
+            return Ok(new { result.Data });
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using UserService.Application.Common;
 using UserService.Application.DTOs;
 
 namespace UserService.Application.MediatrConfiguration.Queries
@@ -7,5 +8,5 @@ namespace UserService.Application.MediatrConfiguration.Queries
     /// Модель запроса на получение пользователя по идентификатору.
     /// </summary>
     /// <param name="UserId"></param>
-    public record GetUserByIdQuery(int UserId) : IRequest<UserDto>;
+    public record GetUserByIdQuery(int UserId) : IRequest<Result<UserDto>>;
 }

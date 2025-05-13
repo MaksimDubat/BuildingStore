@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
+using UserService.Application.Common;
 using UserService.Application.DTOs;
+using UserService.Application.Extensions;
 using UserService.Application.Interfaces;
 using UserService.Application.MediatrConfiguration.Queries;
 using UserService.Domain.Enums;
@@ -10,7 +12,7 @@ namespace UserService.Application.MediatrConfiguration.Handlers
     /// <summary>
     /// Обработчик запроса на получение менеджеров.
     /// </summary>
-    public class GetManagersQueryHandler : IRequestHandler<GetManagersQuery, IEnumerable<UserDto>>
+    public class GetManagersQueryHandler : IRequestHandler<GetManagersQuery, Result<IEnumerable<UserDto>>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -21,16 +23,13 @@ namespace UserService.Application.MediatrConfiguration.Handlers
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<UserDto>> Handle(GetManagersQuery request, CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<UserDto>>> Handle(GetManagersQuery request, CancellationToken cancellationToken)
         {
-            var managers = await _unitOfWork.Users.GetManagersAsync(cancellationToken);
+            var managers = await _unitOfWork.Users.GetAllAsync(q => q.Where(x => x.Role == UserRole.Manager).ApplyPagination(request.PazeNumber, request.PageSize), cancellationToken);
 
-            if (managers == null)
-            {
-                throw new KeyNotFoundException("Not found");
-            }
+            var result = _mapper.Map<IEnumerable<UserDto>>(managers);
 
-            return _mapper.Map<IEnumerable<UserDto>>(managers);
+            return Result<IEnumerable<UserDto>>.Success(result, "Users");
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using UserService.Application.Extensions;
 using UserService.Application.Interfaces;
 using UserService.Domain.DataBase;
 using UserService.Domain.Entities;
@@ -42,13 +43,10 @@ namespace UserService.Infrastructure.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter, CancellationToken cancellation)
+        public async Task<List<T>> GetAllAsync(Func<IQueryable<T>, IQueryable<T>> queryBuilder, CancellationToken cancellation)
         {
-            var query = _context.Set<T>().AsQueryable();
-
-            var filteredQuery = query.Where(filter);
-
-            return await filteredQuery.ToListAsync(cancellation);
+            var query = queryBuilder(_context.Set<T>());
+            return await query.ToListAsync(cancellation);
         }
 
         /// <inheritdoc/>

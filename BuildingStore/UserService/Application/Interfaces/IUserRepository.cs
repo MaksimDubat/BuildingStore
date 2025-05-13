@@ -23,12 +23,5 @@ namespace UserService.Application.Interfaces
         /// <param name="cancellation"></param>
         Task<bool> IsUserExistOrDuplicateAsync(AppUser user, CancellationToken cancellation);
 
-        /// <summary>
-        /// Получение пользователей менеджеров.
-        /// </summary>
-        /// <param name="role"></param>
-        /// <param name="cancellation"></param>
-        Task<IEnumerable<AppUser>> GetManagersAsync(CancellationToken cancellation);
-
     }
 }
