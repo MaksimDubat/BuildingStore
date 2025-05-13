@@ -1,3 +1,6 @@
+using System.Configuration;
+using UserService.WebAPI.Middleware;
+using UserService.WebAPI.Registrations;
 
 namespace UserService
 {
@@ -8,7 +11,16 @@ namespace UserService
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddDatabase(builder.Configuration);
+            builder.Services.AddRedisCache();
+            builder.Services.AddJwtAuthentication(builder.Configuration);
+            builder.Services.AddAuthorizationPolicies();
+            builder.Services.AddApplicationServices();
+            builder.Services.AddRepositories();
+            builder.Services.AddValidation();
+            builder.Services.AddMediatrExtension();
+            builder.Services.AddAutoMapperExtension();
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -25,8 +37,15 @@ namespace UserService
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            app.UseMiddleware<ApiKeyMiddleware>();
 
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+            app.UseRouting();
+
+            app.UseAuthentication();
+
+            app.UseAuthorization();
 
             app.MapControllers();
 
