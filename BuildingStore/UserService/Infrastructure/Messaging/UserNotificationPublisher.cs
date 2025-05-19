@@ -17,7 +17,6 @@ namespace UserService.Infrastructure.Messaging
         private readonly RabbitMqConnectionFactory _connectionFactory;
         private readonly IServiceScopeFactory _scopeFactory;
 
-        private int _lastUserId = 0;
         private const int PageSize = 50;
 
         public UserNotificationPublisher(RabbitMqConnectionFactory connectionFactory, IServiceScopeFactory scopeFactory)
@@ -53,7 +52,6 @@ namespace UserService.Infrastructure.Messaging
 
             var users = await unitOfWork.Users.GetAllAsync(
                 q => q
-                    .Where(u => u.Id > _lastUserId)
                     .OrderBy(u => u.Id)
                     .Take(PageSize),
                 cancellation);
@@ -78,12 +76,6 @@ namespace UserService.Infrastructure.Messaging
                     cancellationToken: cancellation);
             }
 
-            var lastUser = users.LastOrDefault();
-
-            if (lastUser is not null)
-            {
-                _lastUserId = lastUser.Id;
-            }
         }
 
     }

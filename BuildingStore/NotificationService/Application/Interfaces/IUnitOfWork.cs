@@ -16,5 +16,10 @@ namespace NotificationService.Application.Interfaces
         /// Репозиторий по работе с сообщениями.
         /// </summary>
         IEmailMessageRepository EmailMessages { get; }
+
+        /// <summary>
+        /// Репозиторий по работе с email.
+        /// </summary>
+        IEmailsToSentRepository EmailsToSent { get; }
     }
 }

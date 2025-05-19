@@ -16,6 +16,7 @@ namespace NotificationService.Infrastructure.UnitOfWork
         private IClientSessionHandle? _session;
 
         public IEmailMessageRepository EmailMessages { get; }
+        public IEmailsToSentRepository EmailsToSent {  get; }
 
         public UnitOfWork(IMongoClient mongoClient, IConfiguration configuration)
         {
@@ -24,6 +25,7 @@ namespace NotificationService.Infrastructure.UnitOfWork
             _context = new NotificationDbContext(_database);
 
             EmailMessages = new EmailMessageRepository(_context);
+            EmailsToSent = new EmailsToSentRepository(_context);
         }
 
         /// <inheritdoc/>

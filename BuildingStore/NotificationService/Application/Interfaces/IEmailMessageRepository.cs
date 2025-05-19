@@ -15,5 +15,11 @@ namespace NotificationService.Application.Interfaces
         /// <param name="cancellation"></param>
         Task<EmailMessage> GetMessageBySubjectAsync(string subject, CancellationToken cancellation);
 
+        /// <summary>
+        /// Получение послденего добавленного сообщения.
+        /// </summary>
+        /// <param name="cancellation"></param>
+        /// <returns></returns>
+        Task<EmailMessage> GetLatestMessageAsync(CancellationToken cancellation);
     }
 }

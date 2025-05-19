@@ -1,5 +1,6 @@
 ﻿using NotificationService.Application.DTOs;
 using NotificationService.Application.Interfaces;
+using NotificationService.Domain.Collections;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
@@ -57,9 +58,20 @@ namespace NotificationService.Infrastructure.Messaging
 
                 using var scope = _serviceProvider.CreateScope();
 
-                var userEmailCache = scope.ServiceProvider.GetRequiredService<IUserEmailCacheService>();
+                var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
-                await userEmailCache.SetProfileAsync(user.Id, user.UserEmail, TimeSpan.FromHours(2), cancellation);
+
+                var emailsToSend = new EmailsToSent
+                {
+                    Email = user.UserEmail
+                };
+
+                var exist = await unitOfWork.EmailsToSent.AnyAsync(p => p.Email == emailsToSend.Email, cancellation);
+
+                if (!exist)
+                {
+                    await unitOfWork.EmailsToSent.AddEntityAsync(emailsToSend, cancellation);
+                }
 
                 await _channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
             };

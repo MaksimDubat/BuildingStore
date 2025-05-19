@@ -1,6 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
 using NotificationService.Domain.Collections;
+using System.Linq.Expressions;
 
 namespace NotificationService.Application.Interfaces
 {
@@ -44,5 +45,12 @@ namespace NotificationService.Application.Interfaces
         /// <param name="id"></param>
         /// <param name="cancellation"></param>
         Task<T> GetByIdAsync(ObjectId id, CancellationToken cancellation);
+
+        /// <summary>
+        /// Проверка записей.
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <param name="cancellation"></param>
+        Task<bool> AnyAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellation);
     }
 }

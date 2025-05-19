@@ -23,5 +23,11 @@ namespace NotificationService.Domain.Collections
         /// </summary>
         public string Body { get; set; }
 
+
+        /// <summary>
+        /// Время создания.
+        /// </summary>
+        public DateTime CreatedAt = DateTime.Now;
+
     }
 }

@@ -1,6 +1,9 @@
 ﻿using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
+using NotificationService.Application.DTOs;
+using NotificationService.Application.Interfaces;
+using NotificationService.Domain.Collections;
 using NotificationService.Domain.Smtp;
 
 
@@ -13,10 +16,12 @@ namespace NotificationService.Application.Services
     public class EmailSender
     {
         private readonly SmtpSettings _settings;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public EmailSender(IOptions<SmtpSettings> settings)
+        public EmailSender(IOptions<SmtpSettings> settings, IUnitOfWork unitOfWork)
         {
-            _settings = settings.Value; 
+            _settings = settings.Value;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task SendEmailAsync(string toEmail, string subject, string body)
@@ -42,6 +47,20 @@ namespace NotificationService.Application.Services
             await client.SendAsync(message);
 
             await client.DisconnectAsync(true);
+        }
+
+        public async Task SendNewsletterAsync(CancellationToken cancellation)
+        {
+            var message = await _unitOfWork.EmailMessages.GetLatestMessageAsync(cancellation);
+
+            var users = await _unitOfWork.EmailsToSent.GetAllAsync(q => q, cancellation);
+
+            foreach (var user in users)
+            {
+                await SendEmailAsync(user.Email, message.Subject, message.Body);
+
+                await _unitOfWork.EmailsToSent.DeleteAsync(user.Id, cancellation);
+            }
         }
     }
 }

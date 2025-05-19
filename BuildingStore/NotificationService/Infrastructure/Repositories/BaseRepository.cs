@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using NotificationService.Application.Interfaces;
 using NotificationService.Domain.DataBase;
+using System.Linq.Expressions;
 
 namespace NotificationService.Infrastructure.Repositories
 {
@@ -22,6 +23,12 @@ namespace NotificationService.Infrastructure.Repositories
         public async Task AddEntityAsync(T entity, CancellationToken cancellation)
         {
             await _collection.InsertOneAsync(entity, cancellationToken: cancellation);
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellation)
+        {
+            return await _collection.Find(predicate).AnyAsync(cancellation);
         }
 
         /// <inheritdoc/>

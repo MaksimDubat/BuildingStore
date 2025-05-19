@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Hangfire;
+using Hangfire.Mongo.Migration.Strategies.Backup;
+using Hangfire.Mongo.Migration.Strategies;
+using Hangfire.Mongo;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using NotificationService.Application.Interfaces;
@@ -7,9 +11,14 @@ using NotificationService.Application.Services;
 using NotificationService.Domain.DataBase;
 using NotificationService.Domain.Smtp;
 using NotificationService.Infrastructure.Messaging;
-using NotificationService.Infrastructure.RedisCache;
 using NotificationService.Infrastructure.Repositories;
 using NotificationService.Infrastructure.UnitOfWork;
+using NotificationService.Infrastructure.HangfireJobs;
+using FluentValidation;
+using NotificationService.Application.MediatConfiguration.Commands;
+using NotificationService.Application.Validators.MessageValidator;
+using MediatR;
+using NotificationService.Application.Validators.Behavior;
 
 
 namespace NotificationService.WebAPI.Registrations
@@ -44,6 +53,7 @@ namespace NotificationService.WebAPI.Registrations
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
             services.AddScoped<IEmailMessageRepository, EmailMessageRepository>();
+            services.AddScoped<IEmailsToSentRepository, EmailsToSentRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
@@ -64,6 +74,14 @@ namespace NotificationService.WebAPI.Registrations
             return services;
         }
 
+        public static IServiceCollection AddValidation(this IServiceCollection services)
+        {
+            services.AddTransient<IValidator<AddMessageCommand>, AddMessageValidator>();
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
+            return services;
+        }
+
         public static IServiceCollection AddMessageBroker(this IServiceCollection services)
         {
             services.AddSingleton<RabbitMqConnectionFactory>();
@@ -72,20 +90,32 @@ namespace NotificationService.WebAPI.Registrations
             return services;
         }
 
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+        public static IServiceCollection AddHangFire(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<IUserEmailCacheService, UserEmailCacheService>();  
+            var mongoSettings = configuration.GetSection("MongoSettings").Get<MongoSettings>();
+
+            services.AddHangfire(config =>
+            {
+                config.UseMongoStorage(mongoSettings.ConnectionString, mongoSettings.DatabaseName, new MongoStorageOptions
+                {
+                    MigrationOptions = new MongoMigrationOptions
+                    {
+                        MigrationStrategy = new MigrateMongoMigrationStrategy(),
+                        BackupStrategy = new CollectionMongoBackupStrategy()
+                    },
+                    Prefix = "hangfire",
+                    CheckQueuedJobsStrategy = CheckQueuedJobsStrategy.Poll
+                });
+            });
+
+            services.AddHangfireServer();
 
             return services;
         }
 
-        public static IServiceCollection AddEmailsCache(this IServiceCollection services)
+        public static IServiceCollection AddJobHostedServices(this IServiceCollection services)
         {
-            services.AddStackExchangeRedisCache(options =>
-            {
-                options.Configuration = "127.0.0.1:6380";
-                options.InstanceName = "UserService_";
-            });
+            services.AddHostedService<HangfireJobInitializer>();
 
             return services;
         }

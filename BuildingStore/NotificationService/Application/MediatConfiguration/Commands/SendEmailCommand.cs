@@ -8,6 +8,6 @@ namespace NotificationService.Application.MediatConfiguration.Commands
     /// <summary>
     /// Модель команды отправки сообщения.
     /// </summary>
-    public record SendEmailCommand(IEnumerable<UserResultDto> Users, string Subject) : IRequest<Result<IEnumerable<UserResultDto>>>;
+    public record SendEmailCommand(string Subject) : IRequest<Result>;
 
 }

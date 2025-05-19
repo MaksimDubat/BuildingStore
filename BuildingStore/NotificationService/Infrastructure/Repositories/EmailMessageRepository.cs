@@ -4,6 +4,7 @@ using MongoDB.Driver.Linq;
 using NotificationService.Application.Interfaces;
 using NotificationService.Domain.Collections;
 using NotificationService.Domain.DataBase;
+using System.Threading;
 
 namespace NotificationService.Infrastructure.Repositories
 {
@@ -17,6 +18,15 @@ namespace NotificationService.Infrastructure.Repositories
         public EmailMessageRepository(NotificationDbContext context) : base(context)
         {
             _collection = context.GetCollection<EmailMessage>();
+        }
+
+        /// <inheritdoc/>
+        public async Task<EmailMessage> GetLatestMessageAsync(CancellationToken cancellation)
+        {
+            return await _collection
+            .Find(_ => true)
+            .SortByDescending(m => m.CreatedAt)
+            .FirstOrDefaultAsync(cancellation);
         }
 
         /// <inheritdoc/>

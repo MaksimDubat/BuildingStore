@@ -13,12 +13,10 @@ namespace NotificationService.WebAPI.Controllers
     public class NotificationController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IUserEmailCacheService _userEmailCache;
 
-        public NotificationController(IMediator mediator, IUserEmailCacheService userEmailCache)
+        public NotificationController(IMediator mediator)
         {
             _mediator = mediator;
-            _userEmailCache = userEmailCache;
         }
 
         /// <summary>
@@ -30,11 +28,7 @@ namespace NotificationService.WebAPI.Controllers
         [HttpPost("send")]
         public async Task<IActionResult> SendEmail([FromQuery] string subject, CancellationToken cancellationToken)
         {
-            var users = await _userEmailCache.GetAllEmailsAsync(cancellationToken);
-
-            var result = await _mediator.Send(new SendEmailCommand(users, subject), cancellationToken);
-
-            await _userEmailCache.RemoveEmailsAsync(cancellationToken);
+            var result = await _mediator.Send(new SendEmailCommand(subject), cancellationToken);
 
             return Ok(new { result.Message });
         }
