@@ -22,6 +22,7 @@ namespace UserService
             builder.Services.AddMediatrExtension();
             builder.Services.AddAutoMapperExtension();
             builder.Services.AddControllers();
+            builder.Services.AddMessageBroker();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -36,8 +37,6 @@ namespace UserService
             }
 
             app.UseHttpsRedirection();
-
-            app.UseMiddleware<ApiKeyMiddleware>();
 
             app.UseMiddleware<ExceptionHandlingMiddleware>();
 

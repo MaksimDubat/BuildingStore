@@ -6,9 +6,11 @@ using NotificationService.Application.MediatConfiguration.Handlers;
 using NotificationService.Application.Services;
 using NotificationService.Domain.DataBase;
 using NotificationService.Domain.Smtp;
-using NotificationService.Infrastructure.HttpClients;
+using NotificationService.Infrastructure.Messaging;
+using NotificationService.Infrastructure.RedisCache;
 using NotificationService.Infrastructure.Repositories;
 using NotificationService.Infrastructure.UnitOfWork;
+
 
 namespace NotificationService.WebAPI.Registrations
 {
@@ -62,16 +64,30 @@ namespace NotificationService.WebAPI.Registrations
             return services;
         }
 
-        public static IServiceCollection AddUserHttpClient(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddMessageBroker(this IServiceCollection services)
         {
-            services.AddHttpClient<IUserServiceClient, UserServiceClient>(client =>
+            services.AddSingleton<RabbitMqConnectionFactory>();
+            services.AddHostedService<UserNotificationConsumer>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+        {
+            services.AddScoped<IUserEmailCacheService, UserEmailCacheService>();  
+
+            return services;
+        }
+
+        public static IServiceCollection AddEmailsCache(this IServiceCollection services)
+        {
+            services.AddStackExchangeRedisCache(options =>
             {
-                var apiKey = configuration["UserService:ApiKey"];
-                client.BaseAddress = new Uri(configuration["UserService:BaseUrl"]);
+                options.Configuration = "127.0.0.1:6380";
+                options.InstanceName = "UserService_";
             });
 
             return services;
         }
-            //services.AddTransient<ApiKeyMiddleware>();
     }
 }

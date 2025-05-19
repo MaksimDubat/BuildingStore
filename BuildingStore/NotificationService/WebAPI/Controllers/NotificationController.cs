@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using NotificationService.Application.DTOs;
+using NotificationService.Application.Interfaces;
 using NotificationService.Application.MediatConfiguration.Commands;
 using NotificationService.Application.MediatConfiguration.Queries;
-using NotificationService.Application.Services;
 using NotificationService.Domain.Collections;
 
 namespace NotificationService.WebAPI.Controllers
@@ -13,21 +13,29 @@ namespace NotificationService.WebAPI.Controllers
     public class NotificationController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IUserEmailCacheService _userEmailCache;
 
-        public NotificationController(IMediator mediator)
+        public NotificationController(IMediator mediator, IUserEmailCacheService userEmailCache)
         {
             _mediator = mediator;
+            _userEmailCache = userEmailCache;
         }
 
         /// <summary>
         /// Отправка уведомлений.
         /// </summary>
-        /// <param name="command"></param>
+        /// <param name="subject"></param>
         /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [HttpPost("send")]
         public async Task<IActionResult> SendEmail([FromQuery] string subject, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new SendEmailCommand(subject), cancellationToken);
+            var users = await _userEmailCache.GetAllEmailsAsync(cancellationToken);
+
+            var result = await _mediator.Send(new SendEmailCommand(users, subject), cancellationToken);
+
+            await _userEmailCache.RemoveEmailsAsync(cancellationToken);
+
             return Ok(new { result.Message });
         }
 

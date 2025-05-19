@@ -11,6 +11,7 @@ using UserService.Application.Validators.Behavior;
 using UserService.Application.Validators.UserValidation;
 using UserService.Domain.DataBase;
 using UserService.Infrastructure.JwtSet;
+using UserService.Infrastructure.Messaging;
 using UserService.Infrastructure.RedisCache;
 using UserService.Infrastructure.RefreshTokenSet;
 using UserService.Infrastructure.Repositories;
@@ -138,5 +139,13 @@ namespace UserService.WebAPI.Registrations
             return services;
         }
 
+        public static IServiceCollection AddMessageBroker(this IServiceCollection services)
+        {
+            services.AddSingleton<UserNotificationPublisher>();
+            services.AddSingleton<RabbitMqConnectionFactory>();
+            services.AddHostedService<UserPublisherHostedService>();
+
+            return services;
+        }
     }
 }

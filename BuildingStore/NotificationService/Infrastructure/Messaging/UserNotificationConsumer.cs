@@ -1,0 +1,70 @@
+﻿using NotificationService.Application.DTOs;
+using NotificationService.Application.Interfaces;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using System.Text;
+using System.Text.Json;
+
+namespace NotificationService.Infrastructure.Messaging
+{
+    /// <summary>
+    /// Потребитель данных из сервиса пользователей.
+    /// </summary>
+    public class UserNotificationConsumer : BackgroundService
+    {
+        private readonly RabbitMqConnectionFactory _connectionFactory;
+        private readonly IServiceProvider _serviceProvider;
+
+        private IConnection _connection;
+        private IChannel _channel;
+
+        public UserNotificationConsumer(RabbitMqConnectionFactory connectionFactory, IServiceProvider serviceProvider)
+        {
+            _connectionFactory = connectionFactory;
+            _serviceProvider = serviceProvider;
+        }
+
+        public override async Task StartAsync(CancellationToken cancellationToken)
+        {
+            _connection = await _connectionFactory.CreateConnectionAsync(cancellationToken);
+            _channel = await _connection.CreateChannelAsync();
+
+            await _channel.QueueDeclareAsync(queue: "user_notifications_queue",
+                durable: true,
+                exclusive: false,
+                autoDelete: false,
+                arguments: new Dictionary<string, object>
+                {
+                     { "x-queue-mode", "lazy" }
+                },
+                cancellationToken: cancellationToken);
+
+            await base.StartAsync(cancellationToken);
+        }
+
+        protected async override Task ExecuteAsync(CancellationToken cancellation)
+        {
+            var consumer = new AsyncEventingBasicConsumer(_channel);
+
+            consumer.ReceivedAsync += async (sender, ea) =>
+            {
+                var body = ea.Body.ToArray();
+
+                var user = JsonSerializer.Deserialize<UserResultDto>(Encoding.UTF8.GetString(body), new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                using var scope = _serviceProvider.CreateScope();
+
+                var userEmailCache = scope.ServiceProvider.GetRequiredService<IUserEmailCacheService>();
+
+                await userEmailCache.SetProfileAsync(user.Id, user.UserEmail, TimeSpan.FromHours(2), cancellation);
+
+                await _channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
+            };
+
+            await _channel.BasicConsumeAsync(queue: "user_notifications_queue", autoAck: false, consumer: consumer);
+        }
+    }
+}

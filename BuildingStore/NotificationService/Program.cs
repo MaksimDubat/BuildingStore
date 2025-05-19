@@ -1,4 +1,3 @@
-
 using NotificationService.WebAPI.Registrations;
 
 namespace NotificationService
@@ -10,12 +9,14 @@ namespace NotificationService
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddUserHttpClient(builder.Configuration);
             builder.Services.AddMongoDatabase(builder.Configuration);
             builder.Services.AddRepositories();
             builder.Services.AddSmtpConfiguration(builder.Configuration);
             builder.Services.AddMediatrExtension();
             builder.Services.AddControllers();
+            builder.Services.AddMessageBroker();
+            builder.Services.AddApplicationServices();
+            builder.Services.AddEmailsCache();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

@@ -1,7 +1,18 @@
 ﻿namespace NotificationService.Application.DTOs
 {
-    public class UserResultDto<T>
+    /// <summary>
+    /// DTO сущности пользователя.
+    /// </summary>
+    public class UserResultDto
     {
-        public List<T> Data { get; set; } = [];
+        /// <summary>
+        /// Идентификатор пользователя.
+        /// </summary>
+        public int Id { get; set; }
+
+        /// <summary>
+        /// Email пользователя.
+        /// </summary>
+        public string UserEmail { get; set; }
     }
 }
