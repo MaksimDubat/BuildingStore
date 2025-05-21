@@ -1,15 +1,16 @@
 ﻿using MediatR;
+using ProductService.Application.Common;
+using ProductService.Application.Interfaces;
 using ProductService.Application.MediatrConfiguration.CartMediatrConfiguration.Commands;
 using ProductService.Application.MediatrConfiguration.OrderMediatrConfiguration.Commands;
 using ProductService.Domain.Enums;
-using ProductService.Domain.Interfaces;
 
 namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfiguration.Handlers
 {
     /// <summary>
     /// Обработчик команды для изменения статуса заказа.
     /// </summary>
-    public class ChangeStatusOfOrderCommandHandler : IRequestHandler<ChangeStatusOfOrderCommand>
+    public class ChangeStatusOfOrderCommandHandler : IRequestHandler<ChangeStatusOfOrderCommand, Result>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -18,13 +19,13 @@ namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfigurat
             _unitOfWork = unitOfWork;
         }
 
-        public async Task Handle(ChangeStatusOfOrderCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(ChangeStatusOfOrderCommand request, CancellationToken cancellationToken)
         {
             var order = await _unitOfWork.Orders.GetAsync(request.OrderId, cancellationToken);
 
-            if (order == null)
+            if (order is null)
             {
-                throw new KeyNotFoundException("Cart not found");
+                return Result.Failure("Cart not found");
             }
 
             order.Status = request.Status;
@@ -32,6 +33,7 @@ namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfigurat
             await _unitOfWork.Orders.UpdateAsync(order, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
 
+            return Result.Success("Cahnged");
         }
     }
 }

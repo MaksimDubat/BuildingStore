@@ -1,5 +1,5 @@
-﻿using ProductService.Domain.Interfaces;
-using ProductService.Infrastructure.DataBase;
+﻿using ProductService.Application.Interfaces;
+using ProductService.Domain.DataBase;
 
 namespace ProductService.Infrastructure.UnitOfWork
 {

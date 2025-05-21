@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using ProductService.Application.Common;
 using ProductService.Application.DTOs;
 
 namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Queries
@@ -6,6 +7,6 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Модель запроса на получение всех товаров без скидок.
     /// </summary>
-    public record GetProductsWithoutSaleQuery() : IRequest<IEnumerable<ProductResponseDto>>;
+    public record GetProductsWithoutSaleQuery(int PageNumber, int PageSize) : IRequest<Result<IEnumerable<ProductResponseDto>>>;
 
 }

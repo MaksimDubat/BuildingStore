@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProductService.Domain.Entities;
 
-namespace ProductService.Infrastructure.DataBase
+namespace ProductService.Domain.DataBase
 {
     /// <summary>
     /// Контекст для работы с БД.

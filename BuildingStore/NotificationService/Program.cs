@@ -18,6 +18,8 @@ namespace NotificationService
             builder.Services.AddMessageBroker();
             builder.Services.AddHangFire(builder.Configuration);
             builder.Services.AddJobHostedServices();
+            builder.Services.AddJwtAuthentication(builder.Configuration);
+            builder.Services.AddAuthorizationPolicies();
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -39,6 +41,8 @@ namespace NotificationService
             app.UseRouting();
 
             app.UseHttpsRedirection();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

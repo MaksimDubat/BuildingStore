@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using ProductService.Application.Common;
 using ProductService.Application.DTOs;
 
 namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Queries
@@ -6,6 +7,6 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Модель запроса на получение рекомендованных товаров исходя из формы.
     /// </summary>
-    public record GetProductsFromFormQuery(FormDto Form) : IRequest<RecomendationsDto>;
+    public record GetProductsFromFormQuery(int PageNumber, int pageSize, FormDto Form) : IRequest<Result<RecomendationsDto>>;
 
 }

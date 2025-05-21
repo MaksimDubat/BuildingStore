@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using ProductService.Application.Common;
 using ProductService.Application.DTOs;
 
 namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Commands
@@ -6,7 +7,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Модель команды для обновления продукта.
     /// </summary>
-    public class UpdateProductCommand : IRequest
+    public class UpdateProductCommand : IRequest<Result>
     {
         /// <summary>
         /// Идентификатор продукта.

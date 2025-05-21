@@ -1,11 +1,12 @@
 ﻿using MediatR;
+using ProductService.Application.Common;
 
 namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfiguration.Commands
 {
     /// <summary>
     /// Модель команды для заказа одного товара.
     /// </summary>
-    public class PurchaseSingleProductCommand : IRequest
+    public class PurchaseSingleProductCommand : IRequest<Result>
     {
         /// <summary>
         /// Идентификатор корзины.

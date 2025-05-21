@@ -19,6 +19,10 @@ using NotificationService.Application.MediatConfiguration.Commands;
 using NotificationService.Application.Validators.MessageValidator;
 using MediatR;
 using NotificationService.Application.Validators.Behavior;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using NotificationService.Infrastructure.JwtSet;
 
 
 namespace NotificationService.WebAPI.Registrations
@@ -116,6 +120,49 @@ namespace NotificationService.WebAPI.Registrations
         public static IServiceCollection AddJobHostedServices(this IServiceCollection services)
         {
             services.AddHostedService<HangfireJobInitializer>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
+        {
+            var jwtOptions = configuration.GetSection("JwtOptions").Get<JwtOptions>();
+            services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
+
+            services.AddAuthentication()
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = jwtOptions.Issuer,
+                        ValidAudience = jwtOptions.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key))
+                    };
+                });
+
+            return services;
+        }
+
+        public static IServiceCollection AddAuthorizationPolicies(this IServiceCollection services)
+        {
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminPolicy", policy =>
+                    policy.RequireRole("Admin"));
+
+                options.AddPolicy("AdminManagerPolicy", policy =>
+                    policy.RequireRole("Admin", "Manager"));
+
+                options.AddPolicy("ManagerPolicy", policy =>
+                    policy.RequireRole("Manager"));
+
+                options.AddPolicy("ManagerAdminUserPolicy", policy =>
+                    policy.RequireRole("User", "Admin", "Manager"));
+            });
 
             return services;
         }

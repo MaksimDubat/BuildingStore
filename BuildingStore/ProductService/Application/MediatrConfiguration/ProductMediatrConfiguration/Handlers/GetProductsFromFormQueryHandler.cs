@@ -1,15 +1,16 @@
 ﻿using AutoMapper;
 using MediatR;
+using ProductService.Application.Common;
 using ProductService.Application.DTOs;
 using ProductService.Application.Extensions;
+using ProductService.Application.Interfaces;
 using ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Queries;
 using ProductService.Domain.Entities;
 using ProductService.Domain.Enums;
-using ProductService.Domain.Interfaces;
 
 namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Handlers
 {
-    public class GetProductsFromFormQueryHandler : IRequestHandler<GetProductsFromFormQuery, RecomendationsDto>
+    public class GetProductsFromFormQueryHandler : IRequestHandler<GetProductsFromFormQuery, Result<RecomendationsDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -20,12 +21,12 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
             _mapper = mapper;
         }
 
-        public async Task<RecomendationsDto> Handle(GetProductsFromFormQuery request, CancellationToken cancellationToken)
+        public async Task<Result<RecomendationsDto>> Handle(GetProductsFromFormQuery request, CancellationToken cancellationToken)
         {
             if (request.Form.BathRoom <= 0 || request.Form.ToiletRoom <= 0 || request.Form.FloorHeatingRooms <= 0 || request.Form.AmoutnOfTaps <= 0 || request.Form.AmountOfWashingMachines <= 0 ||
                 request.Form.AmountOfDishWashinfMachines <= 0 || request.Form.AmountOfSewers <= 0 || request.Form.TotalArea <= 0)
             {
-                throw new ArgumentException("Wrong number");
+                return Result<RecomendationsDto>.Failure("Wrong number");
             }
 
             var calculations = new Dictionary<int, CalculationDto>
@@ -44,11 +45,11 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
 
             };
 
-            var products = await _unitOfWork.Products.GetAllAsync(cancellationToken);
+            var products = await _unitOfWork.Products.GetAllAsync(q => q, cancellationToken);
 
             if (products == null)
             {
-                throw new KeyNotFoundException("Products not found");
+                return Result<RecomendationsDto>.Failure("Products not found");
             }
 
             var matchedProducts = products
@@ -56,14 +57,17 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
                 .OrderBy(p => p.Price)
                 .ToList();
 
+            matchedProducts.ApplyPagination(request.PageNumber, request.pageSize);
+
             var productDto = _mapper.Map<IEnumerable<ProductResponseDto>>(matchedProducts);
 
-            return new RecomendationsDto
+            var result = new RecomendationsDto
             {
                 Calculations = calculations,
                 RecommendedProducts = productDto
             };
 
+            return Result<RecomendationsDto>.Success(result, "Products");
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using ProductService.Application.Common;
 using ProductService.Application.DTOs;
 
 namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfiguration.Queries
@@ -6,5 +7,5 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
     /// <summary>
     /// Модель запроса на получение всех категорий.
     /// </summary>
-    public record GetAllCategoriesQuery : IRequest<IEnumerable<CategoryDto>>;
+    public record GetAllCategoriesQuery(int PageNumber, int PageSize) : IRequest<Result<IEnumerable<CategoryDto>>>;
 }

@@ -1,4 +1,4 @@
-﻿using ProductService.Domain.Interfaces;
+﻿using ProductService.Application.Interfaces;
 using System.Linq.Expressions;
 
 namespace ProductService.Infrastructure.Specifications

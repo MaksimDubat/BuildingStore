@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using ProductService.Application.Common;
 using ProductService.Application.DTOs;
 
 namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfiguration.Queries
@@ -6,6 +7,6 @@ namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfigurat
     /// <summary>
     /// Модель запроса на получение заказа по идентифкатору.
     /// </summary>
-    public record GetOrderByIdQuery(int OrderId) : IRequest<OrderDto>;
+    public record GetOrderByIdQuery(int OrderId) : IRequest<Result<OrderDto>>;
 
 }

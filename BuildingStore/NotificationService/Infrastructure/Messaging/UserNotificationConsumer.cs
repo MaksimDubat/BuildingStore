@@ -18,6 +18,8 @@ namespace NotificationService.Infrastructure.Messaging
 
         private IConnection _connection;
         private IChannel _channel;
+        private const string ExchangeName = "user_notifications_exchange";
+        private const string QueueName = "product_user_notifications_queue";
 
         public UserNotificationConsumer(RabbitMqConnectionFactory connectionFactory, IServiceProvider serviceProvider)
         {
@@ -30,7 +32,14 @@ namespace NotificationService.Infrastructure.Messaging
             _connection = await _connectionFactory.CreateConnectionAsync(cancellationToken);
             _channel = await _connection.CreateChannelAsync();
 
-            await _channel.QueueDeclareAsync(queue: "user_notifications_queue",
+            await _channel.ExchangeDeclareAsync(exchange: ExchangeName,
+               type: ExchangeType.Fanout,
+               durable: true,
+               autoDelete: false,
+               arguments: null,
+               cancellationToken: cancellationToken);
+
+            await _channel.QueueDeclareAsync(queue: QueueName,
                 durable: true,
                 exclusive: false,
                 autoDelete: false,
@@ -39,6 +48,8 @@ namespace NotificationService.Infrastructure.Messaging
                      { "x-queue-mode", "lazy" }
                 },
                 cancellationToken: cancellationToken);
+
+            await _channel.QueueBindAsync(queue: QueueName, exchange: ExchangeName, routingKey: "", cancellationToken: cancellationToken);
 
             await base.StartAsync(cancellationToken);
         }
@@ -76,7 +87,7 @@ namespace NotificationService.Infrastructure.Messaging
                 await _channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
             };
 
-            await _channel.BasicConsumeAsync(queue: "user_notifications_queue", autoAck: false, consumer: consumer);
+            await _channel.BasicConsumeAsync(queue: QueueName, autoAck: false, consumer: consumer);
         }
     }
 }

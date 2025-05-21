@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using ProductService.Application.DTOs;
+using ProductService.Application.Extensions;
+using ProductService.Application.Interfaces;
 using ProductService.Application.MediatrConfiguration.OrderMediatrConfiguration.Queries;
-using ProductService.Domain.Interfaces;
 
 namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfiguration.Handlers
 {
@@ -19,7 +21,8 @@ namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfigurat
 
         public async Task<IEnumerable<OrderDto>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
         {
-            var result = await _unitOfWork.Orders.GetAllOrdersAsync(cancellationToken);
+            var result = await _unitOfWork.Orders.GetAllAsync(q => q.Include(x => x.OrderItems)
+                .ApplyPagination(request.PageNumber, request.PageSize), cancellationToken);
 
             if(result == null)
             {

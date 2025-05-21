@@ -1,6 +1,6 @@
 ﻿using ProductService.Domain.Entities;
 
-namespace ProductService.Domain.Interfaces
+namespace ProductService.Application.Interfaces
 {
     /// <summary>
     /// Репозиторий по работе с категориями.

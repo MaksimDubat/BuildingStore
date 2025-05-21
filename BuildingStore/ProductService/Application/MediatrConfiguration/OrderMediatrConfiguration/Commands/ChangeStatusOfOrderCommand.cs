@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using ProductService.Application.Common;
 using ProductService.Domain.Enums;
 
 namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfiguration.Commands
@@ -6,7 +7,7 @@ namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfigurat
     /// <summary>
     /// Модель команды изменения статуса заказа.
     /// </summary>
-    public class ChangeStatusOfOrderCommand : IRequest
+    public class ChangeStatusOfOrderCommand : IRequest<Result>
     {
         /// <summary>
         /// Идентификатор заказа.

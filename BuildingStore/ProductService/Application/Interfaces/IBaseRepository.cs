@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace ProductService.Domain.Interfaces
+namespace ProductService.Application.Interfaces
 {
     /// <summary>
     /// Интерфейс общего репозитория по работе с CRUD-операциями.
@@ -9,10 +9,11 @@ namespace ProductService.Domain.Interfaces
     public interface IBaseRepository<T> where T : class
     {
         /// <summary>
-        /// Получение всех сущностей.
+        /// Получение сущностей с пагинацией
         /// </summary>
+        /// <param name="queryBuilder"></param>
         /// <param name="cancellation"></param>
-        Task<List<T>> GetAllAsync(CancellationToken cancellation);
+        Task<List<T>> GetAllAsync(Func<IQueryable<T>, IQueryable<T>> queryBuilder, CancellationToken cancellation);
 
         /// <summary>
         /// Получение сущности по идентификатору.

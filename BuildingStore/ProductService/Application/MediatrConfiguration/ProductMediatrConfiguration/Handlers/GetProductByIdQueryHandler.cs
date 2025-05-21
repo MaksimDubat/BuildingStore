@@ -1,15 +1,16 @@
 ﻿using AutoMapper;
 using MediatR;
+using ProductService.Application.Common;
 using ProductService.Application.DTOs;
+using ProductService.Application.Interfaces;
 using ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Queries;
-using ProductService.Domain.Interfaces;
 
 namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Handlers
 {
     /// <summary>
     /// Обработчик запроса на получение продукта по идентификатору.
     /// </summary>
-    public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, ProductResponseDto>
+    public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, Result<ProductResponseDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -20,16 +21,18 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
             _mapper = mapper;
         }
 
-        public async Task<ProductResponseDto> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
+        public async Task<Result<ProductResponseDto>> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
         {
             var product = await _unitOfWork.Products.GetAsync(request.Id, cancellationToken);
 
-            if (product == null)
+            if (product is null)
             {
-                throw new KeyNotFoundException("Not found");
+                return Result<ProductResponseDto>.Failure("Not found");
             }
             
-            return _mapper.Map<ProductResponseDto>(product);
+            var result = _mapper.Map<ProductResponseDto>(product);
+
+            return Result<ProductResponseDto>.Success(result, "Products");
         }
     }
 }

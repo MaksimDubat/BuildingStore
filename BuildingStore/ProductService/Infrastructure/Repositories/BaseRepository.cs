@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProductService.Domain.Interfaces;
-using ProductService.Infrastructure.DataBase;
+using ProductService.Application.Interfaces;
+using ProductService.Domain.DataBase;
 using System.Linq.Expressions;
 
 namespace ProductService.Infrastructure.Repositories
@@ -48,13 +48,10 @@ namespace ProductService.Infrastructure.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<List<T>> GetAllAsync(CancellationToken cancellation)
+        public async Task<List<T>> GetAllAsync(Func<IQueryable<T>, IQueryable<T>> queryBuilder, CancellationToken cancellation)
         {
-            var result = await _context.Set<T>()
-                .AsNoTracking()
-                .ToListAsync(cancellation);
-
-            return result;
+            var query = queryBuilder(_context.Set<T>());
+            return await query.ToListAsync(cancellation);
         }
 
         /// <inheritdoc/>

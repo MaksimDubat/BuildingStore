@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NotificationService.Application.DTOs;
 using NotificationService.Application.Interfaces;
@@ -24,7 +25,7 @@ namespace NotificationService.WebAPI.Controllers
         /// </summary>
         /// <param name="subject"></param>
         /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        [Authorize(Policy = "AdminPolicy")]
         [HttpPost("send")]
         public async Task<IActionResult> SendEmail([FromQuery] string subject, CancellationToken cancellationToken)
         {
@@ -38,6 +39,7 @@ namespace NotificationService.WebAPI.Controllers
         /// </summary>
         /// <param name="command"></param>
         /// <param name="cancellationToken"></param>
+        [Authorize(Policy = "AdminManagerPolicy")]
         [HttpPost]
         public async Task<IActionResult> AddEmail([FromBody] MessageModel model, CancellationToken cancellationToken)
         {
@@ -51,6 +53,7 @@ namespace NotificationService.WebAPI.Controllers
         /// <param name="page"></param>
         /// <param name="size"></param>
         /// <param name="cancellation"></param>
+        [Authorize(Policy = "AdminManagerPolicy")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<EmailMessage>>> GetMessages([FromQuery] int page, [FromQuery] int size, CancellationToken cancellation)
         {
@@ -64,6 +67,7 @@ namespace NotificationService.WebAPI.Controllers
         /// <param name="page"></param>
         /// <param name="size"></param>
         /// <param name="cancellation"></param>
+        [Authorize(Policy = "AdminManagerPolicy")]
         [HttpDelete("{messageId}")]
         public async Task<ActionResult> DeleteMessage(string messageId, CancellationToken cancellation)
         {
@@ -76,7 +80,7 @@ namespace NotificationService.WebAPI.Controllers
         /// </summary>
         /// <param name="messageId"></param>
         /// <param name="cancellation"></param>
-        /// <returns></returns>
+        [Authorize(Policy = "AdminManagerPolicy")]
         [HttpGet("{messageId}")]
         public async Task<ActionResult> GetMessageById(string messageId, CancellationToken cancellation)
         {
@@ -84,12 +88,13 @@ namespace NotificationService.WebAPI.Controllers
             return Ok(new { messages.Data });
         }
 
-       /// <summary>
-       /// Обновление сообщения.
-       /// </summary>
-       /// <param name="id"></param>
-       /// <param name="model"></param>
-       /// <param name="cancellation"></param>
+        /// <summary>
+        /// Обновление сообщения.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="model"></param>
+        /// <param name="cancellation"></param>
+        [Authorize(Policy = "AdminManagerPolicy")]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateMessage(string id, [FromBody] MessageModel model, CancellationToken cancellation)
         {

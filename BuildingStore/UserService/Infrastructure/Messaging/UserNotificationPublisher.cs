@@ -18,6 +18,7 @@ namespace UserService.Infrastructure.Messaging
         private readonly IServiceScopeFactory _scopeFactory;
 
         private const int PageSize = 50;
+        private const string ExchangeName = "user_notifications_exchange";
 
         public UserNotificationPublisher(RabbitMqConnectionFactory connectionFactory, IServiceScopeFactory scopeFactory)
         {
@@ -31,14 +32,11 @@ namespace UserService.Infrastructure.Messaging
 
             _channel = await _connection.CreateChannelAsync();
 
-            await _channel.QueueDeclareAsync(queue: "user_notifications_queue",
+            await _channel.ExchangeDeclareAsync(exchange: ExchangeName,
+                type: ExchangeType.Fanout,
                 durable: true,
-                exclusive: false,
                 autoDelete: false,
-                arguments: new Dictionary<string, object>
-                {
-                     { "x-queue-mode", "lazy" }
-                },
+                arguments: null,
                 cancellationToken: cancellation);
 
             _timer = new Timer(async _ => await PublishUsersBatchAsync(cancellation), null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
@@ -68,8 +66,8 @@ namespace UserService.Infrastructure.Messaging
                 };
 
                 await _channel.BasicPublishAsync(
-                    exchange: "",
-                    routingKey: "user_notifications_queue",
+                    exchange: ExchangeName,
+                    routingKey: "",
                     mandatory: true,
                     basicProperties: properties,
                     body: body,

@@ -14,7 +14,16 @@ namespace ProductService
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            ProductServiceRegistrations.RegisterRepositories(builder.Services, builder.Configuration);
+            builder.Services.AddDatabase(builder.Configuration);
+            builder.Services.AddJwtAuthentication(builder.Configuration);
+            builder.Services.AddAuthorizationPolicies();
+            builder.Services.AddRepositories();
+            builder.Services.AddValidation();
+            builder.Services.AddMediatrExtension();
+            builder.Services.AddAutoMapperExtension();
+            builder.Services.AddProductHostedServises();
+            builder.Services.AddServices();
+            builder.Services.AddMessageBroker();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -38,6 +47,11 @@ namespace ProductService
 
             app.UseStaticFiles();
 
+            app.UseRouting();
+
+            app.UseHttpsRedirection();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

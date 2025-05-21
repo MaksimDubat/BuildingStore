@@ -6,6 +6,6 @@ namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfigurat
     /// <summary>
     /// Модель запроса на получение всех заказов.
     /// </summary>
-    public record GetAllOrdersQuery() : IRequest<IEnumerable<OrderDto>>;
+    public record GetAllOrdersQuery(int PageNumber, int PageSize) : IRequest<IEnumerable<OrderDto>>;
  
 }

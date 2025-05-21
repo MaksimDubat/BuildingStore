@@ -1,16 +1,17 @@
 ﻿using AutoMapper;
 using MediatR;
+using ProductService.Application.Common;
 using ProductService.Application.DTOs;
+using ProductService.Application.Interfaces;
 using ProductService.Application.MediatrConfiguration.CartMediatrConfiguration.Commands;
 using ProductService.Domain.Entities;
-using ProductService.Domain.Interfaces;
 
 namespace ProductService.Application.MediatrConfiguration.CartMediatrConfiguration.Handlers
 {
     /// <summary>
     /// Обработчик запроса на добавление товара в коризну.
     /// </summary>
-    public class AddProductToCartCommandHandler : IRequestHandler<AddProductToCartCommand>
+    public class AddProductToCartCommandHandler : IRequestHandler<AddProductToCartCommand, Result>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -19,25 +20,25 @@ namespace ProductService.Application.MediatrConfiguration.CartMediatrConfigurati
             _unitOfWork = unitOfWork;
         }
 
-        public async Task Handle(AddProductToCartCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(AddProductToCartCommand request, CancellationToken cancellationToken)
         {
             var cart = await _unitOfWork.Carts.GetAsync(request.CartId, cancellationToken);
 
-            if (cart == null)
+            if (cart is null)
             {
-                throw new KeyNotFoundException("cart wasnt found");
+                return Result.Failure("cart wasnt found");
             }
 
             var product = await _unitOfWork.Products.GetAsync(request.ProductId, cancellationToken);
 
-            if(product == null)
+            if(product is null)
             {
-                throw new KeyNotFoundException("product wasnt found");
+                return Result.Failure("product wasnt found");
             }
             
             if(request.Amount > product.Amount)
             {
-                throw new ArgumentException("such amount is not available now");
+                return Result.Failure("such amount is not available now");
             }
 
             var cartItem = new CartItem
@@ -52,6 +53,7 @@ namespace ProductService.Application.MediatrConfiguration.CartMediatrConfigurati
             await _unitOfWork.CartItems.AddAsync(cartItem, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
 
+            return Result.Success("Added");
         }
     }
 }

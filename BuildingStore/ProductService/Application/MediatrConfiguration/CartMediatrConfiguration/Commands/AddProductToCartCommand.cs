@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using ProductService.Application.Common;
 using ProductService.Application.DTOs;
 
 namespace ProductService.Application.MediatrConfiguration.CartMediatrConfiguration.Commands
@@ -6,7 +7,7 @@ namespace ProductService.Application.MediatrConfiguration.CartMediatrConfigurati
     /// <summary>
     /// Модель команды добавления товара в корзину.
     /// </summary>
-    public class AddProductToCartCommand : IRequest
+    public class AddProductToCartCommand : IRequest<Result>
     {
         /// <summary>
         /// Идентификатор корзины.

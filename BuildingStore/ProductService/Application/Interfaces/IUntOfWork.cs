@@ -1,4 +1,4 @@
-﻿namespace ProductService.Domain.Interfaces
+﻿namespace ProductService.Application.Interfaces
 {
     /// <summary>
     /// Интерфейс паттерна UnityOfWork

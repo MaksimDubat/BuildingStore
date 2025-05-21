@@ -1,12 +1,18 @@
 
+using ApiGateway.WebAPI.Registrations;
+using Ocelot.DependencyInjection;
+using Ocelot.Middleware;
+
 namespace ApiGateway
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            builder.Configuration.AddOcelotConfiguration();
+            builder.Services.AddOcelotGateway(builder.Configuration);
+            builder.Services.AddJwtAuthentication(builder.Configuration);
             // Add services to the container.
 
             builder.Services.AddControllers();
@@ -25,10 +31,13 @@ namespace ApiGateway
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
 
-
             app.MapControllers();
+
+            await app.UseOcelot();
 
             app.Run();
         }

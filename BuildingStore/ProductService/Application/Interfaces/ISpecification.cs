@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace ProductService.Domain.Interfaces
+namespace ProductService.Application.Interfaces
 {
     /// <summary>
     /// Интерфейс определения спецификации.

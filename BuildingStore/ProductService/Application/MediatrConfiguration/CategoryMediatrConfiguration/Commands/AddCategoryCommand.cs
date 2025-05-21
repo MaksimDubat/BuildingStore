@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using ProductService.Application.Common;
 using ProductService.Application.DTOs;
 
 namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfiguration.Commands
@@ -6,7 +7,7 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
     /// <summary>
     /// Модель команды для добавления категории.
     /// </summary>
-    public class AddCategoryCommand : IRequest
+    public class AddCategoryCommand : IRequest<Result>
     {
         /// <summary>
         /// Категория.

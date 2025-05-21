@@ -1,11 +1,12 @@
 ﻿using MediatR;
+using ProductService.Application.Common;
 
 namespace ProductService.Application.MediatrConfiguration.CartMediatrConfiguration.Commands
 {
     /// <summary>
     /// Модель команды для изменения количества товаров в корзине.
     /// </summary>
-    public class ChangeAmountOfProductCommand : IRequest
+    public class ChangeAmountOfProductCommand : IRequest<Result>
     {
         /// <summary>
         /// Идентификатор корзины.

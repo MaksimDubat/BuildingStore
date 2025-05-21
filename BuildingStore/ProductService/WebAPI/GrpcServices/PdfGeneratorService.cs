@@ -20,7 +20,9 @@ namespace ProductService.WebAPI.GrpcServices
 
         public override async Task<PdfResponse> GeneratePdfForOrder(OrderIdRequest request, ServerCallContext context)
         {
-            var (pdfContent, fileName) = await _mediator.Send(new GeneratePdfForOrderQuery(request.OrderId));
+            var result = await _mediator.Send(new GeneratePdfForOrderQuery(request.OrderId));
+
+            var (pdfContent, fileName) = result.Data;
 
             return new PdfResponse
             {
@@ -31,7 +33,9 @@ namespace ProductService.WebAPI.GrpcServices
 
         public override async Task<PdfResponse> GeneratePdfForAllOrders(EmptyRequest request, ServerCallContext context)
         {
-            var (pdfContent, fileName) = await _mediator.Send(new GeneratePdfForAllOrdersQuery());
+            var result = await _mediator.Send(new GeneratePdfForAllOrdersQuery());
+
+            var (pdfContent, fileName) = result.Data;
 
             return new PdfResponse
             {

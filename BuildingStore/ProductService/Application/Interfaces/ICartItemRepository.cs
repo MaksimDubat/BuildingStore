@@ -1,7 +1,7 @@
 ﻿using ProductService.Application.DTOs;
 using ProductService.Domain.Entities;
 
-namespace ProductService.Domain.Interfaces
+namespace ProductService.Application.Interfaces
 {
     /// <summary>
     /// Интерфейс по работе с продуктами в корзине.
