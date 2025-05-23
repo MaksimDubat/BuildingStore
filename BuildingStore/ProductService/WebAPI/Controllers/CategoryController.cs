@@ -30,6 +30,7 @@ namespace ProductService.WebAPI.Controllers
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAllCategories([FromQuery] int page, [FromQuery] int size, CancellationToken cancellation)
         {
             var result = await _mediator.Send(new GetAllCategoriesQuery(page, size), cancellation);
+
             return Ok(new { result.Data });
         }
 
@@ -43,6 +44,7 @@ namespace ProductService.WebAPI.Controllers
         public async Task<ActionResult<CategoryDto>> GetCategoryById(int id, CancellationToken cancellation)
         {
             var result = await _mediator.Send(new GetCategoryByIdQuery(id), cancellation);
+
             return Ok(new { result.Data });
         }
 
@@ -56,6 +58,7 @@ namespace ProductService.WebAPI.Controllers
         public async Task<ActionResult<CategoryDto>> AddCategory([FromBody] AddCategoryCommand command, CancellationToken cancellation)
         {
             var result = await _mediator.Send(command, cancellation);
+
             return Ok(new { result.Message });
         }
 
@@ -83,6 +86,7 @@ namespace ProductService.WebAPI.Controllers
         public async Task<ActionResult> DeleteCategory(int id, CancellationToken cancellation)
         {
             var result = await _mediator.Send(new DeleteCategoryCommand(id), cancellation);
+
             return Ok(new { result.Message });
         }
     }

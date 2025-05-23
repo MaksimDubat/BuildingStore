@@ -7,6 +7,9 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Модель запроса на получение рекомендованных товаров исходя из формы.
     /// </summary>
-    public record GetProductsFromFormQuery(int PageNumber, int pageSize, FormDto Form) : IRequest<Result<RecomendationsDto>>;
+    public record GetProductsFromFormQuery(int PageNumber, 
+        int pageSize, 
+        FormDto Form) 
+        : IRequest<Result<RecomendationsDto>>;
 
 }

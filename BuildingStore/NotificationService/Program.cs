@@ -15,7 +15,7 @@ namespace NotificationService
             builder.Services.AddSmtpConfiguration(builder.Configuration);
             builder.Services.AddMediatrExtension();
             builder.Services.AddValidation();
-            builder.Services.AddMessageBroker();
+            builder.Services.AddMessageBroker(builder.Configuration);
             builder.Services.AddHangFire(builder.Configuration);
             builder.Services.AddJobHostedServices();
             builder.Services.AddJwtAuthentication(builder.Configuration);
@@ -33,8 +33,6 @@ namespace NotificationService
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
-            app.UseHttpsRedirection();
 
             app.UseMiddleware<ExceptionHandlingMiddleware>();
 

@@ -1,4 +1,5 @@
-﻿using RabbitMQ.Client;
+﻿using Microsoft.Extensions.Options;
+using RabbitMQ.Client;
 
 namespace UserService.Infrastructure.Messaging
 {
@@ -7,21 +8,21 @@ namespace UserService.Infrastructure.Messaging
     /// </summary>
     public class RabbitMqConnectionFactory
     {
-        private readonly IConfiguration _configuration;
+        private readonly RabbitMqConfig _config;
 
-        public RabbitMqConnectionFactory(IConfiguration configuration)
+        public RabbitMqConnectionFactory(IOptions<RabbitMqConfig> config)
         {
-            _configuration = configuration;
+            _config = config.Value;
         }
 
         public async Task<IConnection> CreateConnectionAsync(CancellationToken cancellation = default)
         {
             var factory = new ConnectionFactory()
             {
-                HostName = _configuration["RabbitMQ:Host"],
-                Port = int.Parse(_configuration["RabbitMQ:Port"]),
-                UserName = _configuration["RabbitMQ:Username"],
-                Password = _configuration["RabbitMQ:Password"]
+                HostName = _config.Host,
+                Port = _config.Port,
+                UserName = _config.Username,
+                Password = _config.Password,
             };
 
             return await factory.CreateConnectionAsync(cancellation);

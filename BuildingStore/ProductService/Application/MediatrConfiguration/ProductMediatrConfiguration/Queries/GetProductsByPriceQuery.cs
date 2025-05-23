@@ -7,7 +7,11 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Модель запроса на получение продуктов отсортированных по цене.
     /// </summary>
-    public record GetProductsByPriceQuery(int PageNumber, int PageSize,
-        decimal MinPrice, decimal MaxPrice, bool OrderBy) : IRequest<Result<IEnumerable<ProductResponseDto>>>;
+    public record GetProductsByPriceQuery(int PageNumber, 
+        int PageSize,
+        decimal MinPrice, 
+        decimal MaxPrice, 
+        bool OrderBy) 
+        : IRequest<Result<IEnumerable<ProductResponseDto>>>;
 
 }

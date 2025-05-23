@@ -1,4 +1,5 @@
-﻿using RabbitMQ.Client;
+﻿using Microsoft.Extensions.Options;
+using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
 using UserService.Application.Interfaces;
@@ -16,14 +17,18 @@ namespace UserService.Infrastructure.Messaging
 
         private readonly RabbitMqConnectionFactory _connectionFactory;
         private readonly IServiceScopeFactory _scopeFactory;
+        private readonly RabbitMqConfig _config;
 
         private const int PageSize = 50;
-        private const string ExchangeName = "user_notifications_exchange";
+        private readonly string _exchangeName;
 
-        public UserNotificationPublisher(RabbitMqConnectionFactory connectionFactory, IServiceScopeFactory scopeFactory)
+        public UserNotificationPublisher(RabbitMqConnectionFactory connectionFactory, IServiceScopeFactory scopeFactory, IOptions<RabbitMqConfig> configOptions)
         {
             _connectionFactory = connectionFactory;
             _scopeFactory = scopeFactory;
+
+            _config = configOptions.Value;
+            _exchangeName = _config.ExchangeName;
         }
 
         public async Task InitializeAsync(CancellationToken cancellation)
@@ -32,7 +37,7 @@ namespace UserService.Infrastructure.Messaging
 
             _channel = await _connection.CreateChannelAsync();
 
-            await _channel.ExchangeDeclareAsync(exchange: ExchangeName,
+            await _channel.ExchangeDeclareAsync(exchange: _exchangeName,
                 type: ExchangeType.Fanout,
                 durable: true,
                 autoDelete: false,
@@ -66,7 +71,7 @@ namespace UserService.Infrastructure.Messaging
                 };
 
                 await _channel.BasicPublishAsync(
-                    exchange: ExchangeName,
+                    exchange: _exchangeName,
                     routingKey: "",
                     mandatory: true,
                     basicProperties: properties,

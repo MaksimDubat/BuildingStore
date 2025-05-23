@@ -15,6 +15,7 @@ using ProductService.Infrastructure.JwtSet;
 using ProductService.Infrastructure.Messaging;
 using ProductService.Infrastructure.Repositories;
 using ProductService.Infrastructure.UnitOfWork;
+using SixLabors.ImageSharp;
 using System.Text;
 
 namespace ProductService.WebAPI.Registrations
@@ -130,8 +131,9 @@ namespace ProductService.WebAPI.Registrations
             return services;
         }
 
-        public static IServiceCollection AddMessageBroker(this IServiceCollection services)
+        public static IServiceCollection AddMessageBroker(this IServiceCollection services, IConfiguration configuration)
         {
+            services.Configure<RabbitMqConfig>(configuration.GetSection("RabbitMQ"));
             services.AddSingleton<RabbitMqConnectionFactory>();
             services.AddHostedService<UserConsumer>();
 

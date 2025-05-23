@@ -4,7 +4,6 @@ using NotificationService.Application.DTOs;
 using NotificationService.Application.Extensions;
 using NotificationService.Application.Interfaces;
 using NotificationService.Application.MediatConfiguration.Queries;
-using UserService.Application.Extensions;
 
 namespace NotificationService.Application.MediatConfiguration.Handlers
 {

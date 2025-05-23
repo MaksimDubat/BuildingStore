@@ -14,15 +14,16 @@ using NotificationService.Infrastructure.Messaging;
 using NotificationService.Infrastructure.Repositories;
 using NotificationService.Infrastructure.UnitOfWork;
 using NotificationService.Infrastructure.HangfireJobs;
-using FluentValidation;
 using NotificationService.Application.MediatConfiguration.Commands;
 using NotificationService.Application.Validators.MessageValidator;
-using MediatR;
 using NotificationService.Application.Validators.Behavior;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using NotificationService.Infrastructure.JwtSet;
+using FluentValidation;
+using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Configuration;
 
 
 namespace NotificationService.WebAPI.Registrations
@@ -86,8 +87,9 @@ namespace NotificationService.WebAPI.Registrations
             return services;
         }
 
-        public static IServiceCollection AddMessageBroker(this IServiceCollection services)
+        public static IServiceCollection AddMessageBroker(this IServiceCollection services, IConfiguration configuration)
         {
+            services.Configure<RabbitMqConfig>(configuration.GetSection("RabbitMQ"));
             services.AddSingleton<RabbitMqConnectionFactory>();
             services.AddHostedService<UserNotificationConsumer>();
 

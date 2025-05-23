@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Configuration;
 using System.Text;
 using UserService.Application.Interfaces;
 using UserService.Application.MediatrConfiguration.Commands;
@@ -39,7 +40,7 @@ namespace UserService.WebAPI.Registrations
         {
             services.AddStackExchangeRedisCache(options =>
             {
-                options.Configuration = "127.0.0.1:6379";
+                options.Configuration = "redis";
                 options.InstanceName = "UserService_";
             });
 
@@ -139,8 +140,9 @@ namespace UserService.WebAPI.Registrations
             return services;
         }
 
-        public static IServiceCollection AddMessageBroker(this IServiceCollection services)
+        public static IServiceCollection AddMessageBroker(this IServiceCollection services, IConfiguration configuration)
         {
+            services.Configure<RabbitMqConfig>(configuration.GetSection("RabbitMQ"));
             services.AddSingleton<UserNotificationPublisher>();
             services.AddSingleton<RabbitMqConnectionFactory>();
             services.AddHostedService<UserPublisherHostedService>();

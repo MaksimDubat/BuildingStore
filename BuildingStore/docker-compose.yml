@@ -1,0 +1,96 @@
+version: "3.9"
+
+services:
+  userPostgres:
+    image: postgres:17
+    container_name: userdb
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: User    
+      POSTGRES_USER: admin        
+      POSTGRES_PASSWORD: password 
+    networks:
+      - mynetwork
+
+  productPostgres:
+    image: postgres:17
+    container_name: productdb
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: Product    
+      POSTGRES_USER: admin        
+      POSTGRES_PASSWORD: password 
+    networks:
+      - mynetwork
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - mynetwork
+  
+  mongo:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: appdb
+    networks:
+     - mynetwork
+    
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - mynetwork
+
+  users:
+    image: userservice:latest
+    container_name: users
+    ports:
+      - "8080:8080"
+    networks:
+      - mynetwork
+
+  products:
+    image: productservice:latest
+    container_name: products
+    ports:
+      - "8082:8080"
+    networks:
+      - mynetwork
+
+  notifications:
+    image: notificationservice:latest
+    container_name: notifications
+    ports:
+      - "8081:8080"
+    networks:
+      - mynetwork
+
+  gateway:
+    image: gateway:latest
+    container_name: gateways
+    ports:
+      - "8000:8000"
+    networks:
+      - mynetwork
+    depends_on:
+      - users
+      - products
+      - notifications
+
+networks:
+  mynetwork:
+    driver: bridge

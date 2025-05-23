@@ -1,5 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using PdfGenerator.Grpc;
 using ProductService.Application.Services;
+using ProductService.Domain.DataBase;
 using ProductService.Infrastructure.Middleware;
 using ProductService.WebAPI.Registrations;
 
@@ -23,7 +25,7 @@ namespace ProductService
             builder.Services.AddAutoMapperExtension();
             builder.Services.AddProductHostedServises();
             builder.Services.AddServices();
-            builder.Services.AddMessageBroker();
+            builder.Services.AddMessageBroker(builder.Configuration);
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -33,6 +35,12 @@ namespace ProductService
             builder.Services.AddGrpc();
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<MutableDbContext>();
+                db.Database.Migrate();
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

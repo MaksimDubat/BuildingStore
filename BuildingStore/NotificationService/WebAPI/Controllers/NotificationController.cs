@@ -69,7 +69,7 @@ namespace NotificationService.WebAPI.Controllers
         /// <param name="cancellation"></param>
         [Authorize(Policy = "AdminManagerPolicy")]
         [HttpDelete("{messageId}")]
-        public async Task<ActionResult> DeleteMessage(string messageId, CancellationToken cancellation)
+        public async Task<ActionResult> DeleteMessage([FromRoute] string messageId, CancellationToken cancellation)
         {
             var messages = await _mediator.Send(new DeleteMessageCommand(messageId), cancellation);
             return Ok(new { messages.Message });
@@ -82,7 +82,7 @@ namespace NotificationService.WebAPI.Controllers
         /// <param name="cancellation"></param>
         [Authorize(Policy = "AdminManagerPolicy")]
         [HttpGet("{messageId}")]
-        public async Task<ActionResult> GetMessageById(string messageId, CancellationToken cancellation)
+        public async Task<ActionResult> GetMessageById([FromRoute] string messageId, CancellationToken cancellation)
         {
             var messages = await _mediator.Send(new GetMessageByIdQuery(messageId), cancellation);
             return Ok(new { messages.Data });
@@ -96,7 +96,7 @@ namespace NotificationService.WebAPI.Controllers
         /// <param name="cancellation"></param>
         [Authorize(Policy = "AdminManagerPolicy")]
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateMessage(string id, [FromBody] MessageModel model, CancellationToken cancellation)
+        public async Task<ActionResult> UpdateMessage([FromRoute] string id, [FromBody] MessageModel model, CancellationToken cancellation)
         {
             var message = await _mediator.Send(new UpdateMessageCommand(id, model), cancellation);
             return Ok(new { message.Message });

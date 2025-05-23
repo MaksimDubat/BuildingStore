@@ -14,6 +14,7 @@ namespace ApiGateway.WebAPI.Registrations
         public static IServiceCollection AddOcelotGateway(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddOcelot(configuration);
+
             return services;
         }
 

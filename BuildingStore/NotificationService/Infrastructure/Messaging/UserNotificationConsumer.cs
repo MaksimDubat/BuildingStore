@@ -1,4 +1,5 @@
-﻿using NotificationService.Application.DTOs;
+﻿using Microsoft.Extensions.Options;
+using NotificationService.Application.DTOs;
 using NotificationService.Application.Interfaces;
 using NotificationService.Domain.Collections;
 using RabbitMQ.Client;
@@ -15,16 +16,21 @@ namespace NotificationService.Infrastructure.Messaging
     {
         private readonly RabbitMqConnectionFactory _connectionFactory;
         private readonly IServiceProvider _serviceProvider;
+        private readonly RabbitMqConfig _configOptions;
 
         private IConnection _connection;
         private IChannel _channel;
-        private const string ExchangeName = "user_notifications_exchange";
-        private const string QueueName = "product_user_notifications_queue";
+        private readonly string _exchangeName;
+        private readonly string _queueName;
 
-        public UserNotificationConsumer(RabbitMqConnectionFactory connectionFactory, IServiceProvider serviceProvider)
+        public UserNotificationConsumer(RabbitMqConnectionFactory connectionFactory, IServiceProvider serviceProvider, IOptions<RabbitMqConfig> configOptions)
         {
             _connectionFactory = connectionFactory;
             _serviceProvider = serviceProvider;
+
+            _configOptions = configOptions.Value;
+            _exchangeName = _configOptions.ExchangeName;
+            _queueName = _configOptions.QueueName;
         }
 
         public override async Task StartAsync(CancellationToken cancellationToken)
@@ -32,14 +38,14 @@ namespace NotificationService.Infrastructure.Messaging
             _connection = await _connectionFactory.CreateConnectionAsync(cancellationToken);
             _channel = await _connection.CreateChannelAsync();
 
-            await _channel.ExchangeDeclareAsync(exchange: ExchangeName,
+            await _channel.ExchangeDeclareAsync(exchange: _exchangeName,
                type: ExchangeType.Fanout,
                durable: true,
                autoDelete: false,
                arguments: null,
                cancellationToken: cancellationToken);
 
-            await _channel.QueueDeclareAsync(queue: QueueName,
+            await _channel.QueueDeclareAsync(queue: _queueName,
                 durable: true,
                 exclusive: false,
                 autoDelete: false,
@@ -49,7 +55,7 @@ namespace NotificationService.Infrastructure.Messaging
                 },
                 cancellationToken: cancellationToken);
 
-            await _channel.QueueBindAsync(queue: QueueName, exchange: ExchangeName, routingKey: "", cancellationToken: cancellationToken);
+            await _channel.QueueBindAsync(queue: _queueName, exchange: _exchangeName, routingKey: "", cancellationToken: cancellationToken);
 
             await base.StartAsync(cancellationToken);
         }
@@ -87,7 +93,7 @@ namespace NotificationService.Infrastructure.Messaging
                 await _channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
             };
 
-            await _channel.BasicConsumeAsync(queue: QueueName, autoAck: false, consumer: consumer);
+            await _channel.BasicConsumeAsync(queue: _queueName, autoAck: false, consumer: consumer);
         }
     }
 }
