@@ -13,6 +13,7 @@ namespace UserService
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddLoggingConfiguration(builder.Configuration);
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddDatabase(builder.Configuration);
             builder.Services.AddRedisCache();

@@ -10,6 +10,7 @@ namespace NotificationService
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddLoggingConfiguration(builder.Configuration);    
             builder.Services.AddMongoDatabase(builder.Configuration);
             builder.Services.AddRepositories();
             builder.Services.AddSmtpConfiguration(builder.Configuration);

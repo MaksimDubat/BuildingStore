@@ -1,5 +1,6 @@
 version: "3.9"
 
+
 services:
   userPostgres:
     image: postgres:17
@@ -12,6 +13,11 @@ services:
       POSTGRES_PASSWORD: password 
     networks:
       - mynetwork
+    healthcheck:
+      test: "pg_isready -U admin"
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   productPostgres:
     image: postgres:17
@@ -24,6 +30,11 @@ services:
       POSTGRES_PASSWORD: password 
     networks:
       - mynetwork
+    healthcheck:
+      test: "pg_isready -U admin"
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:latest
@@ -32,7 +43,12 @@ services:
       - "6379:6379"
     networks:
       - mynetwork
-  
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   mongo:
     image: mongo:latest
     container_name: mongodb
@@ -43,8 +59,12 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: password
       MONGO_INITDB_DATABASE: appdb
     networks:
-     - mynetwork
-    
+      - mynetwork
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -62,6 +82,9 @@ services:
       - "8080:8080"
     networks:
       - mynetwork
+    depends_on:
+      - userPostgres
+      - redis
 
   products:
     image: productservice:latest
@@ -70,6 +93,8 @@ services:
       - "8082:8080"
     networks:
       - mynetwork
+    depends_on:
+      - productPostgres
 
   notifications:
     image: notificationservice:latest
@@ -78,6 +103,8 @@ services:
       - "8081:8080"
     networks:
       - mynetwork
+    depends_on:
+      - mongo
 
   gateway:
     image: gateway:latest
@@ -91,6 +118,43 @@ services:
       - products
       - notifications
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    container_name: elasticsearch
+    environment:
+      discovery.type: "single-node"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      xpack.security.enabled: "false"
+    ports:
+      - "9200:9200"
+    networks:
+      - mynetwork
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.13.4
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
+    depends_on:
+      - elasticsearch
+    networks:
+      - mynetwork
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.13.4
+    container_name: logstash
+    ports:
+      - "5044:5044"
+      - "9600:9600"
+    networks:
+      - mynetwork
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./logstash.conf:/logstash/pipeline/logstash.conf:ro 
+    environment:
+      xpack.monitoring.enabled: "false"
 networks:
   mynetwork:
     driver: bridge

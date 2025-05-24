@@ -24,6 +24,9 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
+using NotificationService.Infrastructure.Elk;
+using Serilog.Sinks.Elasticsearch;
+using Serilog;
 
 
 namespace NotificationService.WebAPI.Registrations
@@ -164,6 +167,29 @@ namespace NotificationService.WebAPI.Registrations
 
                 options.AddPolicy("ManagerAdminUserPolicy", policy =>
                     policy.RequireRole("User", "Admin", "Manager"));
+            });
+
+            return services;
+        }
+
+        public static IServiceCollection AddLoggingConfiguration(this IServiceCollection services, IConfiguration configuration)
+        {
+            var options = configuration.GetSection("ElasticOptions").Get<ElasticOptions>();
+
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(options.Uri))
+        {
+            AutoRegisterTemplate = true,
+            IndexFormat = "notification-service-logs-{0:yyyy.MM.dd}"
+        })
+        .CreateLogger();
+
+            services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.ClearProviders();
+                loggingBuilder.AddSerilog();
             });
 
             return services;

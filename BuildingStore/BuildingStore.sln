@@ -30,6 +30,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "Integra
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{021870EA-3BEE-4E85-B5B3-F6FA873EC181}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "logstash", "logstash", "{9786E63C-0A23-43F8-88D9-1B2711715DE6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pipeline", "pipeline", "{81B1DC35-B754-4129-88D9-250B0983F828}"
+	ProjectSection(SolutionItems) = preProject
+		logstash.conf = logstash.conf
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +80,7 @@ Global
 		{FECBC9F0-276D-418F-825F-C705BE26C4AF} = {0772EB5C-09F4-44F1-8805-A9B9A093E939}
 		{0772EB5C-09F4-44F1-8805-A9B9A093E939} = {019B04D1-62A2-4928-B7D8-19789E95B357}
 		{021870EA-3BEE-4E85-B5B3-F6FA873EC181} = {019B04D1-62A2-4928-B7D8-19789E95B357}
+		{81B1DC35-B754-4129-88D9-250B0983F828} = {9786E63C-0A23-43F8-88D9-1B2711715DE6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C08061C4-A63C-4C3F-AA95-8B76F1E05E46}

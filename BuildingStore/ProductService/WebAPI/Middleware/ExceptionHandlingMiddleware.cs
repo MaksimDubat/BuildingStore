@@ -1,6 +1,7 @@
-﻿using System.Net;
+﻿using Serilog;
+using System.Net;
 
-namespace ProductService.Infrastructure.Middleware
+namespace ProductService.WebAPI.Middleware
 {
     /// <summary>
     /// Обработчик входящих запросов.
@@ -8,10 +9,12 @@ namespace ProductService.Infrastructure.Middleware
     public class ExceptionHandlingMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly Serilog.ILogger _logger;
 
         public ExceptionHandlingMiddleware(RequestDelegate next)
         {
             _next = next;
+            _logger = Log.ForContext<ExceptionHandlingMiddleware>();
         }
 
         public async Task Invoke(HttpContext context)
@@ -22,6 +25,7 @@ namespace ProductService.Infrastructure.Middleware
             }
             catch (Exception ex)
             {
+                _logger.Error(ex, "Unhandled exception caught in middleware");
                 await HandleExceptionAsync(context, ex);
             }
         }
@@ -30,9 +34,7 @@ namespace ProductService.Infrastructure.Middleware
         {
             var statuscode = exception switch
             {
-                KeyNotFoundException => HttpStatusCode.NotFound,
-                ArgumentNullException => HttpStatusCode.BadRequest,
-                _ => HttpStatusCode.InternalServerError
+                _ => HttpStatusCode.BadRequest
             };
 
             var response = new
@@ -46,6 +48,6 @@ namespace ProductService.Infrastructure.Middleware
 
             return context.Response.WriteAsJsonAsync(response);
         }
-        
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Serilog;
+using System.Net;
 
 namespace NotificationService.WebAPI.Middleware
 {
@@ -8,10 +9,12 @@ namespace NotificationService.WebAPI.Middleware
     public class ExceptionHandlingMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly Serilog.ILogger _logger;
 
         public ExceptionHandlingMiddleware(RequestDelegate next)
         {
             _next = next;
+            _logger = Log.ForContext<ExceptionHandlingMiddleware>();
         }
 
         public async Task Invoke(HttpContext context)
@@ -22,6 +25,7 @@ namespace NotificationService.WebAPI.Middleware
             }
             catch (Exception ex)
             {
+                _logger.Error(ex, "Unhandled exception caught in middleware");
                 await HandleExceptionAsync(context, ex);
             }
         }

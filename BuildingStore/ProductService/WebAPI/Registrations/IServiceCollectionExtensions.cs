@@ -11,10 +11,13 @@ using ProductService.Application.Validators.Behavior;
 using ProductService.Application.Validators.CategoryValidation;
 using ProductService.Application.Validators.ProductValidation;
 using ProductService.Domain.DataBase;
+using ProductService.Infrastructure.Elasticsearch;
 using ProductService.Infrastructure.JwtSet;
 using ProductService.Infrastructure.Messaging;
 using ProductService.Infrastructure.Repositories;
 using ProductService.Infrastructure.UnitOfWork;
+using Serilog.Sinks.Elasticsearch;
+using Serilog;
 using SixLabors.ImageSharp;
 using System.Text;
 
@@ -136,6 +139,29 @@ namespace ProductService.WebAPI.Registrations
             services.Configure<RabbitMqConfig>(configuration.GetSection("RabbitMQ"));
             services.AddSingleton<RabbitMqConnectionFactory>();
             services.AddHostedService<UserConsumer>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddLoggingConfiguration(this IServiceCollection services, IConfiguration configuration)
+        {
+            var options = configuration.GetSection("ElasticOptions").Get<ElasticOptions>();
+
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(options.Uri))
+                {
+                    AutoRegisterTemplate = true,
+                    IndexFormat = "notification-service-logs-{0:yyyy.MM.dd}"
+                })
+        .CreateLogger();
+
+            services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.ClearProviders();
+                loggingBuilder.AddSerilog();
+            });
 
             return services;
         }

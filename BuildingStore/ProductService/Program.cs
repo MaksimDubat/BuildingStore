@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using PdfGenerator.Grpc;
 using ProductService.Application.Services;
 using ProductService.Domain.DataBase;
-using ProductService.Infrastructure.Middleware;
+using ProductService.WebAPI.Middleware;
 using ProductService.WebAPI.Registrations;
 
 namespace ProductService
@@ -16,6 +16,7 @@ namespace ProductService
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddLoggingConfiguration(builder.Configuration);
             builder.Services.AddDatabase(builder.Configuration);
             builder.Services.AddJwtAuthentication(builder.Configuration);
             builder.Services.AddAuthorizationPolicies();
