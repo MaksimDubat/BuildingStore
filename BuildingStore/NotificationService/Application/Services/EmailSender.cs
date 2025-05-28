@@ -13,7 +13,7 @@ namespace NotificationService.Application.Services
     /// <summary>
     /// Сервис по отправке email.
     /// </summary>
-    public class EmailSender
+    public class EmailSender : IEmailSender
     {
         private readonly SmtpSettings _settings;
         private readonly IUnitOfWork _unitOfWork;

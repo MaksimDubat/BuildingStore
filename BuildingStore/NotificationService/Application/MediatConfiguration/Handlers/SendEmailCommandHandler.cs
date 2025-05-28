@@ -13,10 +13,10 @@ namespace NotificationService.Application.MediatConfiguration.Handlers
     /// </summary>
     public class SendEmailCommandHandler : IRequestHandler<SendEmailCommand, Result>
     {
-        private readonly EmailSender _emailSender;
+        private readonly IEmailSender _emailSender;
         private readonly IUnitOfWork _unitOfWork;
 
-        public SendEmailCommandHandler(EmailSender emailSender, IUnitOfWork unitOfWork)
+        public SendEmailCommandHandler(IEmailSender emailSender, IUnitOfWork unitOfWork)
         {   
             _emailSender = emailSender;
             _unitOfWork = unitOfWork;

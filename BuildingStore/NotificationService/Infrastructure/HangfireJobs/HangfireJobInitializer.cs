@@ -1,5 +1,6 @@
 ﻿
 using Hangfire;
+using NotificationService.Application.Interfaces;
 using NotificationService.Application.Services;
 
 namespace NotificationService.Infrastructure.HangfireJobs
@@ -18,7 +19,7 @@ namespace NotificationService.Infrastructure.HangfireJobs
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-             _recurringJobManager.AddOrUpdate<EmailSender>(
+             _recurringJobManager.AddOrUpdate<IEmailSender>(
                 "daily-newsletter-job",
                 sender => sender.SendNewsletterAsync(cancellationToken),
                 Cron.Minutely);

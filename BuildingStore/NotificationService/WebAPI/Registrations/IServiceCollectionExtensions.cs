@@ -5,7 +5,6 @@ using Hangfire.Mongo;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using NotificationService.Application.Interfaces;
 using NotificationService.Application.MediatConfiguration.Handlers;
 using NotificationService.Application.Services;
 using NotificationService.Domain.DataBase;
@@ -27,6 +26,7 @@ using Microsoft.Extensions.Configuration;
 using NotificationService.Infrastructure.Elk;
 using Serilog.Sinks.Elasticsearch;
 using Serilog;
+using NotificationService.Application.Interfaces;
 
 
 namespace NotificationService.WebAPI.Registrations
@@ -70,7 +70,7 @@ namespace NotificationService.WebAPI.Registrations
         public static IServiceCollection AddSmtpConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<SmtpSettings>(configuration.GetSection("SmtpSettings"));
-            services.AddTransient<EmailSender>();
+            services.AddTransient<IEmailSender, EmailSender>();
 
             return services;
         }
