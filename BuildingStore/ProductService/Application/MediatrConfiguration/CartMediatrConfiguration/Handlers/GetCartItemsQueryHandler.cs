@@ -1,15 +1,16 @@
 ﻿using AutoMapper;
 using MediatR;
+using ProductService.Application.Common;
 using ProductService.Application.DTOs;
+using ProductService.Application.Interfaces;
 using ProductService.Application.MediatrConfiguration.CartMediatrConfiguration.Queries;
-using ProductService.Domain.Interfaces;
 
 namespace ProductService.Application.MediatrConfiguration.CartMediatrConfiguration.Handlers
 {
     /// <summary>
     /// Обработчик запроса на получение категории по идентификатору.
     /// </summary>
-    public class GetCartItemsQueryHandler : IRequestHandler<GetCartItemsQuery, IEnumerable<CartItemDto>>
+    public class GetCartItemsQueryHandler : IRequestHandler<GetCartItemsQuery, Result<IEnumerable<CartItemDto>>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -20,16 +21,18 @@ namespace ProductService.Application.MediatrConfiguration.CartMediatrConfigurati
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<CartItemDto>> Handle(GetCartItemsQuery request, CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<CartItemDto>>> Handle(GetCartItemsQuery request, CancellationToken cancellationToken)
         {
-            var result = await _unitOfWork.CartItems.GetCartItemsAsync(request.CartId, cancellationToken);
+            var items = await _unitOfWork.CartItems.GetCartItemsAsync(request.CartId, cancellationToken);
 
-            if(result == null)
+            if(items is null)
             {
-                throw new ArgumentNullException("Cart is empty");
+                return Result<IEnumerable<CartItemDto>>.Failure("Cart is empty");
             }
 
-            return _mapper.Map<IEnumerable<CartItemDto>>(result);
+            var result = _mapper.Map<IEnumerable<CartItemDto>>(items);
+
+            return Result<IEnumerable<CartItemDto>>.Success(result, "Items");
         }
     }
 }

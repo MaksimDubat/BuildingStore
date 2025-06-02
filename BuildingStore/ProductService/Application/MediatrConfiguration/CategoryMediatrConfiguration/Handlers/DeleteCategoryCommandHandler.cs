@@ -1,13 +1,14 @@
 ﻿using MediatR;
+using ProductService.Application.Common;
+using ProductService.Application.Interfaces;
 using ProductService.Application.MediatrConfiguration.CategoryMediatrConfiguration.Commands;
-using ProductService.Domain.Interfaces;
 
 namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfiguration.Handlers
 {
     /// <summary>
     /// Обработчик команды для удаления категории.
     /// </summary>
-    public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand>
+    public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand, Result>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -16,18 +17,19 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
             _unitOfWork = unitOfWork;
         }
 
-        public async Task Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
         {
             var category = await _unitOfWork.Categories.GetAsync(request.Id, cancellationToken);
 
-            if (category == null)
+            if (category is null)
             {
-                throw new KeyNotFoundException("Not found");
+                return Result.Failure("Not found");
             }
 
             await _unitOfWork.Categories.DeleteAsync(category.CategoryId, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
 
+            return Result.Success("Deleted");
         }
     }
 }

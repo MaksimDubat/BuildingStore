@@ -1,13 +1,15 @@
 ﻿using AutoMapper;
 using MediatR;
+using ProductService.Application.Common;
 using ProductService.Application.DTOs;
+using ProductService.Application.Extensions;
+using ProductService.Application.Interfaces;
 using ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Queries;
-using ProductService.Domain.Interfaces;
 using ProductService.Infrastructure.UnitOfWork;
 
 namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Handlers
 {
-    public class GetProductsWithoutSaleQueryHandle : IRequestHandler<GetProductsWithoutSaleQuery, IEnumerable<ProductResponseDto>>
+    public class GetProductsWithoutSaleQueryHandle : IRequestHandler<GetProductsWithoutSaleQuery, Result<IEnumerable<ProductResponseDto>>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -18,16 +20,20 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ProductResponseDto>> Handle(GetProductsWithoutSaleQuery request, CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<ProductResponseDto>>> Handle(GetProductsWithoutSaleQuery request, CancellationToken cancellationToken)
         {
             var products = await _unitOfWork.Products.GetProductsWithoutSale(cancellationToken);
 
-            if (products == null)
+            if (products is null)
             {
-                throw new KeyNotFoundException("not found products without sale");
+                return Result<IEnumerable<ProductResponseDto>>.Failure("not found products without sale");
             }
+            
+            var paginatedProducts = products.ApplyPagination(request.PageNumber, request.PageSize);
 
-            return _mapper.Map<IEnumerable<ProductResponseDto>>(products);
+            var result = _mapper.Map<IEnumerable<ProductResponseDto>>(products);
+
+            return Result<IEnumerable<ProductResponseDto>>.Success(result, "Products");
         }
     }
 }

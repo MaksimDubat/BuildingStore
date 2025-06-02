@@ -1,14 +1,15 @@
 ﻿using MediatR;
+using ProductService.Application.Common;
+using ProductService.Application.Interfaces;
 using ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Commands;
 using ProductService.Application.Services;
-using ProductService.Domain.Interfaces;
 
 namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Handlers
 {
     /// <summary>
     /// Обработчик команды для удаления продукта.
     /// </summary>
-    public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand>
+    public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand, Result>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ImageService _imageService;
@@ -19,13 +20,13 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
             _imageService = service;
         }
 
-        public async Task Handle(DeleteProductCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
         {
             var product = await _unitOfWork.Products.GetAsync(request.Id, cancellationToken);
 
-            if(product == null)
+            if(product is null)
             {
-                throw new KeyNotFoundException("Not found");
+                return Result.Failure("Not found");
             }
 
             if (!string.IsNullOrEmpty(product.Image))
@@ -36,6 +37,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
             await _unitOfWork.Products.DeleteAsync(product.ProductId, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
 
+            return Result.Success("Deleted");
         }
     }
 }

@@ -1,11 +1,12 @@
 ﻿using MediatR;
+using ProductService.Application.Common;
 
 namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Commands
 {
     /// <summary>
     /// Модель команды для применения промокода к товару.
     /// </summary>
-    public class AddProductSaleCodeCommand : IRequest
+    public class AddProductSaleCodeCommand : IRequest<Result>
     {
         /// <summary>
         /// Идентификатор продукта.

@@ -1,13 +1,14 @@
 ﻿using MediatR;
+using ProductService.Application.Common;
+using ProductService.Application.Interfaces;
 using ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Commands;
-using ProductService.Domain.Interfaces;
 
 namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Handlers
 {
     /// <summary>
     /// Обработчик команды для применения промокода к товару.
     /// </summary>
-    public class AddProductSaleCodeCommandHandler : IRequestHandler<AddProductSaleCodeCommand>
+    public class AddProductSaleCodeCommandHandler : IRequestHandler<AddProductSaleCodeCommand, Result>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -16,23 +17,23 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
             _unitOfWork = unitOfWork;
         }
 
-        public async Task Handle(AddProductSaleCodeCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(AddProductSaleCodeCommand request, CancellationToken cancellationToken)
         {
             var product = await _unitOfWork.Products.GetAsync(request.ProductId, cancellationToken);
 
-            if (product == null)
+            if (product is null)
             {
-                throw new KeyNotFoundException("Not found");
+                return Result.Failure("Not found");
             }
 
             if(request.Discount <= 0)
             {
-                throw new ArgumentException("Wrong discount");
+                return Result.Failure("Wrong discount");
             }
 
             if(request.SaleEnd <= 0)
             {
-                throw new ArgumentException("Wrong amount of days");
+                return Result.Failure("Wrong amount of days");
             }
 
             product.SaleCode = request.SaleCode;
@@ -41,6 +42,8 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
 
             await _unitOfWork.Products.UpdateAsync(product, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
+
+            return Result.Success("Added");
         }
     }
 }

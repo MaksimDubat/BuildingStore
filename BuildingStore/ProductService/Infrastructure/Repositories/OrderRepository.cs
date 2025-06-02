@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProductService.Application.Interfaces;
+using ProductService.Domain.DataBase;
 using ProductService.Domain.Entities;
 using ProductService.Domain.Enums;
-using ProductService.Domain.Interfaces;
-using ProductService.Infrastructure.DataBase;
 
 namespace ProductService.Infrastructure.Repositories
 {
@@ -16,14 +16,6 @@ namespace ProductService.Infrastructure.Repositories
         public OrderRepository(MutableDbContext context) : base(context)
         {
             _context = context;
-        }
-
-        /// <inheritdoc/>
-        public Task<List<Order>> GetAllOrdersAsync(CancellationToken cancellation)
-        {
-           return _context.Orders
-                .Include(x => x.OrderItems)
-                .ToListAsync();
         }
 
         /// <inheritdoc/>

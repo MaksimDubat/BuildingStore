@@ -50,7 +50,7 @@ namespace UserService.WebAPI.Controllers
         /// <param name="model"></param>
         /// <param name="cancellation"></param>
         [Authorize(Policy = "AdminPolicy")]
-        [HttpPost("registermanager")]
+        [HttpPost("register-manager")]
         public async Task<IActionResult> RegisterManager([FromBody] RegistrationModel model, CancellationToken cancellation)
         {
             var command = await _mediator.Send(new RegisterManagersCommand(model), cancellation);

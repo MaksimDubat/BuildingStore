@@ -1,15 +1,16 @@
 ﻿using MediatR;
+using ProductService.Application.Common;
+using ProductService.Application.Interfaces;
 using ProductService.Application.MediatrConfiguration.OrderMediatrConfiguration.Commands;
 using ProductService.Domain.Entities;
 using ProductService.Domain.Enums;
-using ProductService.Domain.Interfaces;
 
 namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfiguration.Handlers
 {
     /// <summary>
     /// Обработчик запроса на заказ всех продуктов из корзины.
     /// </summary>
-    public class PurchaseAllProductsCommandHandler : IRequestHandler<PurchaseAllProductsCommand>
+    public class PurchaseAllProductsCommandHandler : IRequestHandler<PurchaseAllProductsCommand, Result>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -18,13 +19,13 @@ namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfigurat
             _unitOfWork = unitOfWork;
         }
 
-        public async Task Handle(PurchaseAllProductsCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(PurchaseAllProductsCommand request, CancellationToken cancellationToken)
         {
             var carItems = await _unitOfWork.CartItems.GetCartItemsAsync(request.CartId, cancellationToken);
 
-            if(carItems == null)
+            if(carItems is null)
             {
-                throw new KeyNotFoundException("Cart items are empty");
+                return Result.Failure("Cart items are empty");
             }
 
             var order = new Order
@@ -40,9 +41,9 @@ namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfigurat
             {
                 var product = await _unitOfWork.Products.GetAsync(item.ProductId, cancellationToken);
 
-                if (product == null)
+                if (product is null)
                 {
-                    throw new KeyNotFoundException("Product not found");
+                    return Result.Failure("Product not found");
                 }
 
                 var orderItem = new OrderItem
@@ -52,9 +53,9 @@ namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfigurat
                     TotalPrice = item.Amount * product.Price
                 };
 
-                if(orderItem == null)
+                if(orderItem is null)
                 {
-                    throw new ArgumentNullException("Order items are empty");
+                    return Result.Failure("Order items are empty");
                 }
                
                 order.OrderItems.Add(orderItem);
@@ -69,6 +70,7 @@ namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfigurat
             await _unitOfWork.Orders.AddAsync(order, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
 
+            return Result.Success("Order was created");
         }
     }
 }

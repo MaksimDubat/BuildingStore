@@ -22,7 +22,7 @@ namespace UserService.Application.Validators.CustomValidatorRules
             return ruleBuilder
                 .NotEmpty()
                 .EmailAddress().WithMessage("Wrong format")
-                .Matches(@"^[a-zA-Z@.]+$").WithMessage("Only english letters and @")
+                .Matches(@"^[a-zA-Z0-9@.]+$").WithMessage("Only english letters and @")
                 .Matches(@"^[^<>]+$").WithMessage("not alloed < or >")
                 .MinimumLength(3).WithMessage("no smaller than 3")
                 .MaximumLength(500).WithMessage("no longer than 100");

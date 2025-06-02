@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using ProductService.Application.Common;
 using ProductService.Application.DTOs;
 
 namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfiguration.Queries
@@ -6,6 +7,6 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
     /// <summary>
     /// Модель запроса на получение категории по идентификатору.
     /// </summary>
-    public record GetCategoryByIdQuery(int Id) : IRequest<CategoryDto>;
+    public record GetCategoryByIdQuery(int Id) : IRequest<Result<CategoryDto>>;
 
 }

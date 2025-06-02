@@ -1,16 +1,17 @@
 ﻿using AutoMapper;
 using MediatR;
+using ProductService.Application.Common;
 using ProductService.Application.DTOs;
+using ProductService.Application.Interfaces;
 using ProductService.Application.MediatrConfiguration.CategoryMediatrConfiguration.Queries;
 using ProductService.Domain.Entities;
-using ProductService.Domain.Interfaces;
 
 namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfiguration.Handlers
 {
     /// <summary>
     /// Обработчик запроса на получение категории по идентификатору.
     /// </summary>
-    public class GetCategoryByIdQueryHandler : IRequestHandler<GetCategoryByIdQuery, CategoryDto>
+    public class GetCategoryByIdQueryHandler : IRequestHandler<GetCategoryByIdQuery, Result<CategoryDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -21,16 +22,18 @@ namespace ProductService.Application.MediatrConfiguration.CategoryMediatrConfigu
             _mapper = mapper;
         }
 
-        public async Task<CategoryDto> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
+        public async Task<Result<CategoryDto>> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
         {
             var category = await _unitOfWork.Categories.GetAsync(request.Id, cancellationToken);
 
-            if (category == null)
+            if (category is null)
             {
-                throw new KeyNotFoundException("Not found");
+                return Result<CategoryDto>.Failure("Not found");
             }
 
-            return _mapper.Map<CategoryDto>(category);
+            var result = _mapper.Map<CategoryDto>(category);
+
+            return Result<CategoryDto>.Success(result, "Category");
         }
     }
 }

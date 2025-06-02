@@ -1,11 +1,12 @@
 ﻿using MediatR;
+using ProductService.Application.Common;
 
 namespace ProductService.Application.MediatrConfiguration.CartMediatrConfiguration.Commands
 {
     /// <summary>
     /// Модель команды для удаления продукта из корзины.
     /// </summary>
-    public class DeleteProductFromCartCommand : IRequest
+    public class DeleteProductFromCartCommand : IRequest<Result>
     {
         /// <summary>
         /// Идентификатор корзины.

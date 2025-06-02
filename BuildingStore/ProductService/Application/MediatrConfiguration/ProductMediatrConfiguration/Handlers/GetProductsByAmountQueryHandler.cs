@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using ProductService.Application.Common;
 using ProductService.Application.DTOs;
+using ProductService.Application.Extensions;
+using ProductService.Application.Interfaces;
 using ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Queries;
 using ProductService.Domain.Entities;
-using ProductService.Domain.Interfaces;
 using ProductService.Infrastructure.Specifications;
 
 namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Handlers
@@ -11,7 +13,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Обработчик запроса для получения продуктов по наличию.
     /// </summary>
-    public class GetProductsByAmountQueryHandler : IRequestHandler<GetProductsByAmountQuery, IEnumerable<ProductResponseDto>>
+    public class GetProductsByAmountQueryHandler : IRequestHandler<GetProductsByAmountQuery, Result<IEnumerable<ProductResponseDto>>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -22,18 +24,22 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ProductResponseDto>> Handle(GetProductsByAmountQuery request, CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<ProductResponseDto>>> Handle(GetProductsByAmountQuery request, CancellationToken cancellationToken)
         {
             var specification = new ProductByAmountSpecification();
 
             var products = await _unitOfWork.Products.GetBySpecificationAsync(specification, cancellationToken);
 
-            if (products == null)
+            if (products is null)
             {
-                throw new KeyNotFoundException("Not Found");
+               return Result<IEnumerable<ProductResponseDto>>.Failure("Not Found");
             }
 
-            return _mapper.Map<IEnumerable<ProductResponseDto>>(products);
+            var paginatedProducts = products.ApplyPagination(request.PageNumber, request.PageSize);
+
+            var result =  _mapper.Map<IEnumerable<ProductResponseDto>>(paginatedProducts);
+
+            return Result<IEnumerable<ProductResponseDto>>.Success(result, "Products");
         }
     }
 }

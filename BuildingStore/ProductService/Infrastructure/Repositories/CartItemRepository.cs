@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProductService.Application.Interfaces;
+using ProductService.Domain.DataBase;
 using ProductService.Domain.Entities;
-using ProductService.Domain.Interfaces;
-using ProductService.Infrastructure.DataBase;
 using ProductService.Infrastructure.UnitOfWork;
 using System.Threading;
 

@@ -1,6 +1,8 @@
+using Microsoft.EntityFrameworkCore;
 using PdfGenerator.Grpc;
 using ProductService.Application.Services;
-using ProductService.Infrastructure.Middleware;
+using ProductService.Domain.DataBase;
+using ProductService.WebAPI.Middleware;
 using ProductService.WebAPI.Registrations;
 
 namespace ProductService
@@ -14,7 +16,17 @@ namespace ProductService
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            ProductServiceRegistrations.RegisterRepositories(builder.Services, builder.Configuration);
+            builder.Services.AddLoggingConfiguration(builder.Configuration);
+            builder.Services.AddDatabase(builder.Configuration);
+            builder.Services.AddJwtAuthentication(builder.Configuration);
+            builder.Services.AddAuthorizationPolicies();
+            builder.Services.AddRepositories();
+            builder.Services.AddValidation();
+            builder.Services.AddMediatrExtension();
+            builder.Services.AddAutoMapperExtension();
+            builder.Services.AddProductHostedServises();
+            builder.Services.AddServices();
+            builder.Services.AddMessageBroker(builder.Configuration);
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -24,6 +36,12 @@ namespace ProductService
             builder.Services.AddGrpc();
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<MutableDbContext>();
+                db.Database.Migrate();
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -38,6 +56,11 @@ namespace ProductService
 
             app.UseStaticFiles();
 
+            app.UseRouting();
+
+            app.UseHttpsRedirection();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using ProductService.Application.Interfaces;
+using ProductService.Domain.DataBase;
 using ProductService.Domain.Entities;
-using ProductService.Domain.Interfaces;
-using ProductService.Infrastructure.DataBase;
 using System.Threading;
 
 namespace ProductService.Infrastructure.Repositories

@@ -1,3 +1,5 @@
+using NotificationService.WebAPI.Middleware;
+using NotificationService.WebAPI.Registrations;
 
 namespace NotificationService
 {
@@ -8,7 +10,17 @@ namespace NotificationService
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
+            builder.Services.AddLoggingConfiguration(builder.Configuration);    
+            builder.Services.AddMongoDatabase(builder.Configuration);
+            builder.Services.AddRepositories();
+            builder.Services.AddSmtpConfiguration(builder.Configuration);
+            builder.Services.AddMediatrExtension();
+            builder.Services.AddValidation();
+            builder.Services.AddMessageBroker(builder.Configuration);
+            builder.Services.AddHangFire(builder.Configuration);
+            builder.Services.AddJobHostedServices();
+            builder.Services.AddJwtAuthentication(builder.Configuration);
+            builder.Services.AddAuthorizationPolicies();
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -23,10 +35,15 @@ namespace NotificationService
                 app.UseSwaggerUI();
             }
 
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+            app.UseRouting();
+
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            app.UseAuthentication();
 
+            app.UseAuthorization();
 
             app.MapControllers();
 

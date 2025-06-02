@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using ProductService.Application.Common;
 using ProductService.Application.DTOs;
 
 namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Queries
@@ -6,5 +7,5 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
     /// <summary>
     /// Модель запроса на получение товара по наименованию.
     /// </summary>
-    public record GetProductByNameQuery(string Name) : IRequest<ProductResponseDto>;
+    public record GetProductByNameQuery(string Name) : IRequest<Result<ProductResponseDto>>;
 }

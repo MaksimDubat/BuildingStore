@@ -1,16 +1,17 @@
 ﻿using AutoMapper;
 using MediatR;
+using ProductService.Application.Common;
+using ProductService.Application.Interfaces;
 using ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Commands;
 using ProductService.Application.Services;
 using ProductService.Domain.Entities;
-using ProductService.Domain.Interfaces;
 
 namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Handlers
 {
     /// <summary>
     /// Обработчик команды для обновления продукта.
     /// </summary>
-    public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand>
+    public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, Result>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -25,27 +26,22 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
             _environment = environment;
         }
 
-        public async Task Handle(UpdateProductCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
             var product = await _unitOfWork.Products.GetAsync(request.Id, cancellationToken);
 
-            if (product == null)
+            if (product is null)
             {
-                throw new KeyNotFoundException("not found");
+                return Result.Failure("not found");
             }
 
             var requestProduct = _mapper.Map<Product>(request.Product);
-
-            if (requestProduct == null)
-            {
-                throw new ArgumentNullException("object is empty");
-            }
 
             var isDuplicate = await _unitOfWork.Products.IsProductExistOrDuplicateAsync(requestProduct, cancellationToken);
 
             if (isDuplicate)
             {
-                throw new ArgumentException("Already exist");
+                return Result.Failure("Already exist");
             }
 
             if (request.Product.Image != null)
@@ -67,6 +63,7 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
             await _unitOfWork.Products.UpdateAsync(product, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
 
+            return Result.Success("Updated");
         }
     }
 }

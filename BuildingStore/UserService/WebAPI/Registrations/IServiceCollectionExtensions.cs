@@ -3,6 +3,9 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog.Sinks.Elasticsearch;
+using Serilog;
+using System.Configuration;
 using System.Text;
 using UserService.Application.Interfaces;
 using UserService.Application.MediatrConfiguration.Commands;
@@ -10,7 +13,9 @@ using UserService.Application.Services;
 using UserService.Application.Validators.Behavior;
 using UserService.Application.Validators.UserValidation;
 using UserService.Domain.DataBase;
+using UserService.Infrastructure.Elasticsearch;
 using UserService.Infrastructure.JwtSet;
+using UserService.Infrastructure.Messaging;
 using UserService.Infrastructure.RedisCache;
 using UserService.Infrastructure.RefreshTokenSet;
 using UserService.Infrastructure.Repositories;
@@ -38,7 +43,7 @@ namespace UserService.WebAPI.Registrations
         {
             services.AddStackExchangeRedisCache(options =>
             {
-                options.Configuration = "127.0.0.1:6379";
+                options.Configuration = "redis";
                 options.InstanceName = "UserService_";
             });
 
@@ -138,5 +143,37 @@ namespace UserService.WebAPI.Registrations
             return services;
         }
 
+        public static IServiceCollection AddMessageBroker(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<RabbitMqConfig>(configuration.GetSection("RabbitMQ"));
+            services.AddSingleton<UserNotificationPublisher>();
+            services.AddSingleton<RabbitMqConnectionFactory>();
+            services.AddHostedService<UserPublisherHostedService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddLoggingConfiguration(this IServiceCollection services, IConfiguration configuration)
+        {
+            var options = configuration.GetSection("ElasticOptions").Get<ElasticOptions>();
+
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(options.Uri))
+                {
+                    AutoRegisterTemplate = true,
+                    IndexFormat = "notification-service-logs-{0:yyyy.MM.dd}"
+                })
+        .CreateLogger();
+
+            services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.ClearProviders();
+                loggingBuilder.AddSerilog();
+            });
+
+            return services;
+        }
     }
 }

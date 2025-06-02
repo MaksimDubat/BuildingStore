@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductService.Application.DTOs;
 using ProductService.Application.MediatrConfiguration.CategoryMediatrConfiguration.Commands;
@@ -10,7 +11,7 @@ namespace ProductService.WebAPI.Controllers
     /// Контроллер по работе с категориями.
     /// </summary>
     [ApiController]
-    [Route("api/category-managment")]
+    [Route("api/v1/category")]
     public class CategoryController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -24,11 +25,13 @@ namespace ProductService.WebAPI.Controllers
         /// Получение всех категорий.
         /// </summary>
         /// <param name="cancellation"></param>
-        [HttpGet("Categories")]
-        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAllCategories(CancellationToken cancellation)
+        [Authorize(Policy = "AdminManagerPolicy")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAllCategories([FromQuery] int page, [FromQuery] int size, CancellationToken cancellation)
         {
-            var categories = await _mediator.Send(new GetAllCategoriesQuery(), cancellation);
-            return Ok(categories);
+            var result = await _mediator.Send(new GetAllCategoriesQuery(page, size), cancellation);
+
+            return Ok(new { result.Data });
         }
 
         /// <summary>
@@ -36,11 +39,13 @@ namespace ProductService.WebAPI.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <param name="cancellation"></param>
-        [HttpGet("category/{id}")]
+        [Authorize(Policy = "AdminManagerPolicy")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<CategoryDto>> GetCategoryById(int id, CancellationToken cancellation)
         {
-            var category = await _mediator.Send(new GetCategoryByIdQuery(id), cancellation);
-            return Ok(category);
+            var result = await _mediator.Send(new GetCategoryByIdQuery(id), cancellation);
+
+            return Ok(new { result.Data });
         }
 
         /// <summary>
@@ -48,11 +53,13 @@ namespace ProductService.WebAPI.Controllers
         /// </summary>
         /// <param name="command"></param>
         /// <param name="cancellation"></param>
+        [Authorize(Policy = "AdminManagerPolicy")]
         [HttpPost]
         public async Task<ActionResult<CategoryDto>> AddCategory([FromBody] AddCategoryCommand command, CancellationToken cancellation)
         {
-            await _mediator.Send(command, cancellation);
-            return Ok("Category was added");
+            var result = await _mediator.Send(command, cancellation);
+
+            return Ok(new { result.Message });
         }
 
         /// <summary>
@@ -61,11 +68,12 @@ namespace ProductService.WebAPI.Controllers
         /// <param name="id"></param>
         /// <param name="command"></param>
         /// <param name="cancellation"></param>
+        [Authorize(Policy = "AdminManagerPolicy")]
         [HttpPut("{id}")]
         public async Task<ActionResult<CategoryDto>> UpdateCategory(int id, [FromBody] UpdateCategoryCommand command, CancellationToken cancellation)
         {
-            await _mediator.Send(command, cancellation);
-            return Ok("Category was updated");
+            var result = await _mediator.Send(command, cancellation);
+            return Ok(new { result.Message });
         }
 
         /// <summary>
@@ -73,11 +81,13 @@ namespace ProductService.WebAPI.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <param name="cancellation"></param>
+        [Authorize(Policy = "AdminManagerPolicy")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCategory(int id, CancellationToken cancellation)
         {
-            await _mediator.Send(new DeleteCategoryCommand(id), cancellation);
-            return Ok("Category was deleted");
+            var result = await _mediator.Send(new DeleteCategoryCommand(id), cancellation);
+
+            return Ok(new { result.Message });
         }
     }
 }

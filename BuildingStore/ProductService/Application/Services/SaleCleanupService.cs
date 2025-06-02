@@ -1,5 +1,5 @@
 ﻿
-using ProductService.Domain.Interfaces;
+using ProductService.Application.Interfaces;
 
 namespace ProductService.Application.Services
 {

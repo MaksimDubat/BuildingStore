@@ -1,16 +1,17 @@
 ﻿using MediatR;
+using ProductService.Application.Common;
 using ProductService.Application.DTOs;
+using ProductService.Application.Interfaces;
 using ProductService.Application.MediatrConfiguration.OrderMediatrConfiguration.Commands;
 using ProductService.Domain.Entities;
 using ProductService.Domain.Enums;
-using ProductService.Domain.Interfaces;
 
 namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfiguration.Handlers
 {
     /// <summary>
     /// Обработчик команды для заказа одного товара.
     /// </summary>
-    public class PurchaseSingleProductCommandHandler : IRequestHandler<PurchaseSingleProductCommand>
+    public class PurchaseSingleProductCommandHandler : IRequestHandler<PurchaseSingleProductCommand, Result>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -19,25 +20,25 @@ namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfigurat
             _unitOfWork = unitOfWork;
         }
 
-        public async Task Handle(PurchaseSingleProductCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(PurchaseSingleProductCommand request, CancellationToken cancellationToken)
         {
             var cartItem = await _unitOfWork.CartItems.GetCartItemAsync(request.CartId, request.ProductId, cancellationToken);
 
-            if (cartItem == null)
+            if (cartItem is null)
             {
-                throw new KeyNotFoundException("Cart not found");
+                return Result.Failure("Cart not found");
             }
 
             var product = await _unitOfWork.Products.GetAsync(request.ProductId, cancellationToken);
 
-            if (product == null)
+            if (product is null)
             {
-                throw new KeyNotFoundException("Product not Found");
+                return Result.Failure("Product not Found");
             }
 
             decimal finalPrice = product.Price;
 
-            if(product.SaleCode != null && request.SaleCode == request.SaleCode)
+            if(product.SaleCode is not null && request.SaleCode == request.SaleCode)
             {
                 finalPrice = product.SalePrice ?? product.Price;
             }
@@ -59,9 +60,9 @@ namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfigurat
                     }
             };
 
-            if(order == null)
+            if(order is null)
             {
-                throw new ArgumentNullException("Order is empty");
+                return Result.Failure("Order is empty");
             }
 
             await _unitOfWork.Orders.AddAsync(order, cancellationToken);
@@ -72,6 +73,7 @@ namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfigurat
             await _unitOfWork.CartItems.DeleteEntityAsync(cartItem, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
 
+            return Result.Success("Created");
         }
     }
 }

@@ -1,15 +1,17 @@
 ﻿using AutoMapper;
 using MediatR;
+using ProductService.Application.Common;
 using ProductService.Application.DTOs;
+using ProductService.Application.Extensions;
+using ProductService.Application.Interfaces;
 using ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Queries;
-using ProductService.Domain.Interfaces;
 
 namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Handlers
 {
     /// <summary>
     /// Обработчик запроса на получение всех продуктов.
     /// </summary>
-    public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, IEnumerable<ProductResponseDto>>
+    public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, Result<IEnumerable<ProductResponseDto>>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -20,16 +22,13 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ProductResponseDto>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<ProductResponseDto>>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
         {
-            var result = await _unitOfWork.Products.GetAllAsync(cancellationToken);
+            var products = await _unitOfWork.Products.GetAllAsync(q => q.ApplyPagination(request.pageNumber, request.pageSize), cancellationToken);
 
-            if(result == null)
-            {
-                throw new KeyNotFoundException("Not found");
-            }
+            var result =  _mapper.Map<IEnumerable<ProductResponseDto>>(products);
 
-            return _mapper.Map<IEnumerable<ProductResponseDto>>(result);
+            return Result<IEnumerable<ProductResponseDto>>.Success(result, "Products");
         }
     }
 }

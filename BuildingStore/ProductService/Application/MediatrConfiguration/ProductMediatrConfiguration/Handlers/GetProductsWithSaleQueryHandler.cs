@@ -1,15 +1,17 @@
 ﻿using AutoMapper;
 using MediatR;
+using ProductService.Application.Common;
 using ProductService.Application.DTOs;
+using ProductService.Application.Extensions;
+using ProductService.Application.Interfaces;
 using ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Queries;
-using ProductService.Domain.Interfaces;
 
 namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfiguration.Handlers
 {
     /// <summary>
     /// Обработчик запроса на получение продуктов со скидкой
     /// </summary>
-    public class GetProductsWithSaleQueryHandler : IRequestHandler<GetProductsWithSaleQuery, IEnumerable<ProductResponseDto>>
+    public class GetProductsWithSaleQueryHandler : IRequestHandler<GetProductsWithSaleQuery, Result<IEnumerable<ProductResponseDto>>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -20,16 +22,20 @@ namespace ProductService.Application.MediatrConfiguration.ProductMediatrConfigur
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ProductResponseDto>> Handle(GetProductsWithSaleQuery request, CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<ProductResponseDto>>> Handle(GetProductsWithSaleQuery request, CancellationToken cancellationToken)
         {
-            var result = await _unitOfWork.Products.GetProductsWithSale(cancellationToken);
+            var products = await _unitOfWork.Products.GetProductsWithSale(cancellationToken);
 
-            if(result == null)
+            if(products is null)
             {
-                throw new KeyNotFoundException("No products with sale");
+                return Result<IEnumerable<ProductResponseDto>>.Failure("No products with sale");
             }
 
-            return _mapper.Map<IEnumerable<ProductResponseDto>>(result); 
+            var paginatedProducts = products.ApplyPagination(request.PageNumber, request.PageSize);
+
+            var result = _mapper.Map<IEnumerable<ProductResponseDto>>(paginatedProducts);
+
+            return Result<IEnumerable<ProductResponseDto>>.Success(result, "Products");
         }
     }
 }

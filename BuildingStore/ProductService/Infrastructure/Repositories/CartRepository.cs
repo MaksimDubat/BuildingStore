@@ -1,6 +1,6 @@
-﻿using ProductService.Domain.Entities;
-using ProductService.Domain.Interfaces;
-using ProductService.Infrastructure.DataBase;
+﻿using ProductService.Application.Interfaces;
+using ProductService.Domain.DataBase;
+using ProductService.Domain.Entities;
 
 namespace ProductService.Infrastructure.Repositories
 {

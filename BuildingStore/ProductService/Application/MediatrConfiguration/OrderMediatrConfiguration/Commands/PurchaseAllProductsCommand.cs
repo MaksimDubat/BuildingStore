@@ -1,11 +1,12 @@
 ﻿using MediatR;
+using ProductService.Application.Common;
 
 namespace ProductService.Application.MediatrConfiguration.OrderMediatrConfiguration.Commands
 {
     /// <summary>
     /// Модель запроса на заказ всех продуктов из корзины. 
     /// </summary>
-    public class PurchaseAllProductsCommand : IRequest
+    public class PurchaseAllProductsCommand : IRequest<Result>
     {
         /// <summary>
         /// Идентификатор корзины.
